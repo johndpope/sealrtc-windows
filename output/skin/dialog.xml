@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window size="350,210" caption="0,0,0,30" roundcorner="2,2">
+  <Font name="Verdana" size="12" bold="true" italic="false" />
+  <VerticalLayout name="bg" bkcolor="#FFFFFFFF">
+    <HorizontalLayout height="32"  inset="16,0,0,0" bkcolor="#FF69C1F1">
+      <Label name="labtitle" width="200" height="30" textcolor="#FFFFFFFF" font="1" />
+      <Label />
+      <FadeButton name="closebtn" width="30" height="32" keyboard="false" normalimage="file='common\close_normal_1.png'" hotimage="file='common\close_hover_1.png'" pushedimage="file='common\close_pushed_1.png'"/>
+    </HorizontalLayout>
+    <VerticalLayout width="350" height="178">
+      <HorizontalLayout name="panel" height="127">
+        <Label width="36" />
+        <VerticalLayout width="48" name="iconpanel">
+           <Label name="Icon" width="48" height="48" bkimage="file='dialog\warning.png'"/>
+        </VerticalLayout>
+        <Label width="18" />
+        <VerticalLayout name="infopanel">
+          <Text name="info" width="212" height="90" textpadding="2,2,2,2" textcolor="#FF7D8291"  font="0" endellipsis="true"/>
+        </VerticalLayout>
+      </HorizontalLayout>
+      <HorizontalLayout height="32" inset="0,0,19,0">
+        <Label />
+        <Button name="btnok" text="是" keyboard="false" width="100" height="32" textcolor="#FF666666" align="center" normalimage="file='common\b_normal.png' corner='1,1,1,1'" hotimage="file='common\b_hover.png' corner='1,1,1,1'" pushedimage="file='common\b_press.png' corner='1,1,1,1'"/>
+        <Label width="10"/>
+        <Button name="btncancel" text="否" keyboard="false" width="100" height="32" textcolor="#FF666666" align="center" normalimage="file='common\b_normal.png' corner='1,1,1,1'" hotimage="file='common\b_hover.png' corner='1,1,1,1'" pushedimage="file='common\b_press.png' corner='1,1,1,1'" />
+      </HorizontalLayout>
+      <VerticalLayout height="19" />
+    </VerticalLayout>
+  </VerticalLayout>
+</Window>

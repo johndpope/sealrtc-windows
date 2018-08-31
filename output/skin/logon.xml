@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window size="900,600" caption="0,0,0,95" mininfo="900,600" maxinfo="900,600" roundcorner="2,2">
+  <Font name="Microsoft YaHei UI" size="10" bold="false" italic="false" />
+  <Font name="Microsoft YaHei UI" size="14" bold="false" italic="false" />
+  <Font name="Microsoft YaHei UI" size="12" bold="false" italic="false" />
+  <Font name="Microsoft YaHei UI" size="16" bold="false" italic="false" />
+  <Default name="VScrollBar" value="width=&quot;14&quot; height=&quot;45&quot; showbutton1=&quot;false&quot; showbutton2=&quot;false&quot; thumbnormalimage=&quot;file=&apos;common\scrollbar_normal.png&apos; corner=&apos;0,10,0,10&apos;&quot; thumbhotimage=&quot;file=&apos;common\scrollbar_push.png&apos; corner=&apos;0,10,0,10&apos;&quot; thumbpushedimage=&quot;file=&apos;common\scrollbar_push.png&apos; corner=&apos;0,10,0,10&apos;&quot; bknormalimage=&quot;file=&apos;common\scrollbar_normal_bg.png&apos; corner=&apos;0,10,0,10&apos;&quot; bkhotimage=&quot;file=&apos;common\scrollbar_hot_bg.png&apos; corner=&apos;0,10,0,10&apos;&quot; bkpushedimage=&quot;file=&apos;common\scrollbar_hot_bg.png&apos; corner=&apos;0,10,0,10&apos;&quot;" />
+  <VerticalLayout name="bg" bkcolor="#FFFFFFFF" inset="0,0,0,0" bkimage="file='logon\bg.png'">
+    <HorizontalLayout height="30">
+      <Label />
+      <Label name="title" text="" align="center"/>
+      <Label />
+    </HorizontalLayout>
+    <Button name="minbtn" float="true" pos="842,0,870,28" keyboard="false" normalimage="file='common\min_normal.png' source='5,10,33,38'" hotimage="file='common\min_hover.png' source='5,10,33,38'" pushedimage="file='common\min_pushed.png' source='5,10,33,38'"/>
+    <Button name="closebtn" float="true" pos="870,0,898,28" keyboard="false" normalimage="file='common\close_normal.png' source='5,10,33,38'" hotimage="file='common\close_hover.png' source='5,10,33,38'" pushedimage="file='common\close_pushed.png' source='5,10,33,38'"/>
+    <HorizontalLayout height="540" inset="0,45,0,0">
+      <Label />
+      <VerticalLayout name="center_layout" width="390" height="430" inset="48,30,48,0" bkimage="file='logon\bg_1.png' corner='50,50,50,50'">
+        <HorizontalLayout height="103" inset="0,10,0,10">
+          <Label />
+          <Label width="83" height="83" bkimage="file='logon\logo.png'"/>
+          <Label />
+        </HorizontalLayout>
+        <Label name="welcome_tip" height="18" align="center" textcolor="#FF3682F2" text="" font="2" />
+        <Label name="app_version" height="18" align="center" textcolor="#FF3682F2" text="" font="2" />
+        <Label name="channel_id_tip" height="18" align="center" textcolor="#FF000000" text="" font="2" />
+        <Label height="5"/>
+        <RichEdit name="channel_edit" inset="10,5,10,0" font="2" height="30" align="center" textlimit="30" textcolor="#FFB9BDC4" multiline="false" bkcolor="#FFFFFFFF" borderround="4,4"/>
+        <Label height="5"/>
+        <Label name="name_tip" height="18" align="center" textcolor="#FF000000" text="" font="2" />
+        <Label height="5"/>
+        <RichEdit name="name_edit" inset="10,5,10,0" font="2" height="30" align="center" textlimit="20" textcolor="#FFB9BDC4" multiline="false" bkcolor="#FFFFFFFF" borderround="4,4"/>
+        <Label height="10"/>
+        <HorizontalLayout height="14" childpadding="5">
+          <Label width="11" height="13" bkimage="file='logon\icon_1.png'"/>
+          <Label name="role_id_tip" height="14" textcolor="#FF3682F2" text="" font="2" />
+        </HorizontalLayout>
+        <Label height="10"/>
+        <HorizontalLayout height="21" inset="0,3,0,3"  bkcolor="#FFFFFFFF" borderround="4,4">
+          <CheckBox name="select_observer" width="290" textpadding="11" height="15" align="left" font="2" textcolor="#FFA0A0A0" text="" normalimage="file='logon\no_select.png' corner='0,0,32,0'" selectedimage="file='logon\select.png' corner='0,0,32,0'"/>
+        </HorizontalLayout>
+        <HorizontalLayout height="36" inset="0,8,0,0">
+          <Label />
+          <Button name="join_channel_btn" width="180" height="28" text="" enabled="false" font="1" textcolor="#FFFFFFFF" normalimage="file='logon\bg_2.png' corner='7,10,7,10'" hotimage="file='logon\bg_2.png' corner='7,10,7,10'" pushedimage="file='logon\bg_2.png' corner='7,10,7,10'" disabledimage="file='logon\bg_2.png' corner='7,10,7,10'" />
+          <Label />
+        </HorizontalLayout>
+        <HorizontalLayout height="22" inset="0,8,0,0" childpadding="5">
+          <Label />
+          <Label width="10" height="14" bkimage="file='logon\icon_2.png' dest='0,5,10,14'"/>
+          <Button name="setting_text_btn" width="50" height="14" text="" font="2" textcolor="#FF3682F2" disabledtextcolor="#FFA0A0A0"/>
+          <Button name="setting_btn" width="10" height="14" normalimage="file='logon\icon_3.png' dest='0,6,10,12'" hotimage="file='logon\icon_3.png' dest='0,6,10,12'" pushedimage="file='logon\icon_3.png' dest='0,6,10,12'" />
+          <Label />
+        </HorizontalLayout>
+        <Label height="10"/>
+        <VerticalLayout name="setting_layout" height="70" inset="0,5,0,5" vscrollbar="true" childpadding="5" borderround="4,4" bkcolor="#FFFFFFFF" visible="false">
+          <CheckBox name="select_video" width="280" height="15"  textpadding="11,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="" normalimage="file='logon\no_select.png' corner='0,0,32,0'" selectedimage="file='logon\select.png' corner='0,0,32,0'"/>
+          <Label height="1" bkcolor="#FFF4F4F4"/>
+          <HorizontalLayout height="15" inset="11,0,0,0" childpadding="10">
+            <Label name="select_solution_tip" width="36" height="15" textcolor="#FF3682F2" text="" font="2" />
+            <Option name="select_solution_1" width="65" height="15" group="select_solution" textpadding="15,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="320x240" normalimage="file='logon\option_no_select.png' dest='0,3,10,12'" selectedimage="file='logon\option_select.png' dest='0,3,10,12'" />
+            <Option name="select_solution_2" width="65" height="15" selected="true" group="select_solution" textpadding="15,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="640x480" normalimage="file='logon\option_no_select.png' dest='0,3,10,12'" selectedimage="file='logon\option_select.png' dest='0,3,10,12'"/>
+            <Option name="select_solution_3" width="70" height="15" group="select_solution" textpadding="15,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="1280x720" normalimage="file='logon\option_no_select.png' dest='0,3,10,12'" selectedimage="file='logon\option_select.png' dest='0,3,10,12'"/>
+          </HorizontalLayout>
+          <HorizontalLayout height="15" inset="11,0,0,0" childpadding="10">
+            <Label width="36" height="15" />
+            <Option name="select_solution_4" width="220" height="15" group="select_solution" textpadding="15,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="" normalimage="file='logon\option_no_select.png' dest='0,3,10,12'" selectedimage="file='logon\option_select.png' dest='0,3,10,12'" />
+          </HorizontalLayout>
+          <CheckBox name="select_beauty" width="280" height="15"  textpadding="11,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="" normalimage="file='logon\no_select.png' corner='0,0,32,0'" selectedimage="file='logon\select.png' corner='0,0,32,0'"/>
+          <CheckBox name="select_tiny_stream" width="280" height="15"  textpadding="11,0,0,0" align="left" font="2" textcolor="#FF3682F2" text="" normalimage="file='logon\no_select.png' corner='0,0,32,0'" selectedimage="file='logon\select.png' corner='0,0,32,0'"/>
+        </VerticalLayout>
+      </VerticalLayout>
+      <Label />
+    </HorizontalLayout>
+    <Button name="open_setting_btn" float="true" pos="2,572,50,572" />
+    <HorizontalLayout name="setting_url_layout" float="true" pos="0,30,900,30" inset="0,60,0,0">
+      <Label />
+      <VerticalLayout width="340" height="405" bkcolor="#FFCBD0DF" inset="20,20,20,20">
+        <Label name="change_ip_title" height="45" font="1" textcolor="#FF3682F2" align="center" text=""/>
+        <VerticalLayout height="75" inset="0,5,0,5">
+          <Label height="30" text="Cmp(e.g. tcp://rtccmp.ronghub.com:80)" font="2" textcolor="#FF3682F2"/>
+          <RichEdit name="cmp_edit" inset="10,5,10,0" font="2" height="30" align="left" textcolor="#FFB9BDC4" multiline="false" bkcolor="#FFFFFFFF" borderround="4,4"/>
+        </VerticalLayout>
+        <VerticalLayout height="75" inset="0,5,0,5">
+          <Label height="30" text="Token(e.g. https://rtcapi.ronghub.com/token)" font="2" textcolor="#FF3682F2"/>
+          <RichEdit name="token_edit" inset="10,5,10,0" font="2" height="30" align="left" textcolor="#FFB9BDC4" multiline="false" bkcolor="#FFFFFFFF" borderround="4,4"/>
+        </VerticalLayout>
+        <VerticalLayout height="75" inset="0,5,0,5">
+          <Label height="30" text="App Key(e.g. 1357924680acegbdf)" font="2" textcolor="#FF3682F2"/>
+          <RichEdit name="appkey_edit" inset="10,5,10,0" font="2" height="30" align="left" textcolor="#FFB9BDC4" multiline="false" bkcolor="#FFFFFFFF" borderround="4,4"/>
+        </VerticalLayout>
+        <Label name="setting_tip" height="45" font="2" textcolor="#FFFF0000" align="center"/>
+        <Label height="15" />
+        <HorizontalLayout height="40" inset="0,5,0,5" childpadding="20">
+          <Label />
+          <Button name="modify_btn" width="75" height="30" text="" font="1" textcolor="#FFFFFFFF" normalimage="file='logon\bg_2.png' corner='7,10,7,10'" hotimage="file='logon\bg_2.png' corner='7,10,7,10'" pushedimage="file='logon\bg_2.png' corner='7,10,7,10'" disabledimage="file='logon\bg_2.png' corner='7,10,7,10'" />
+          <Button name="empty_btn" width="75" height="30" text="" font="1" textcolor="#FFFFFFFF" normalimage="file='logon\bg_2.png' corner='7,10,7,10'" hotimage="file='logon\bg_2.png' corner='7,10,7,10'" pushedimage="file='logon\bg_2.png' corner='7,10,7,10'" disabledimage="file='logon\bg_2.png' corner='7,10,7,10'" />
+          <Button name="cancel_modify_btn" width="75" height="30" text="" font="1" textcolor="#FFFFFFFF" normalimage="file='logon\bg_2.png' corner='7,10,7,10'" hotimage="file='logon\bg_2.png' corner='7,10,7,10'" pushedimage="file='logon\bg_2.png' corner='7,10,7,10'" disabledimage="file='logon\bg_2.png' corner='7,10,7,10'" />
+          <Label />
+        </HorizontalLayout>
+      </VerticalLayout>
+      <Label />
+    </HorizontalLayout>
+  </VerticalLayout>
+</Window>

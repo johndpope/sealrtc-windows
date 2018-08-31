@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{cc8b086e-5b25-4b0b-9395-060612cba57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{b56f17dc-c530-4bc1-9fbb-822bd67d097d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Utility">
+      <UniqueIdentifier>{fb236113-75e9-4f96-81d0-99ad2034f2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\WndManager">
+      <UniqueIdentifier>{cb3fb207-c86a-4c7a-9640-64468010cd88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Global">
+      <UniqueIdentifier>{b2b401ee-6745-4ef0-9075-18a135ac8eb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\Xml">
+      <UniqueIdentifier>{357189e6-03da-4188-aa4d-32aa26874d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\Define">
+      <UniqueIdentifier>{f1054cea-c35f-4ec4-bd96-eaae6e4de44c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\UI\Wnd">
+      <UniqueIdentifier>{888886e2-cbdf-404f-98d9-4ed26e9aa4e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="src\include">
+      <UniqueIdentifier>{94bc653e-02e7-4ab4-a279-31ace3a334a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\Engine">
+      <UniqueIdentifier>{64274d6e-1a89-475c-89f5-274d2caec3a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Crash">
+      <UniqueIdentifier>{f89ce3fd-d429-4b38-a1a6-446c157b251b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI\Control">
+      <UniqueIdentifier>{c20ad2f4-70fd-456d-8eb4-a21c0d9b3d68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Dictionary">
+      <UniqueIdentifier>{0472cbc2-a9f8-429b-9482-12691d982d3c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpStringUtility.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpLock.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpTimer.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpThreadHandler.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Define\MsgBroadcast.cpp">
+      <Filter>src\UI\Define</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\WndManager\WndManager.cpp">
+      <Filter>src\UI\WndManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Global\Base.cpp">
+      <Filter>src\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Global\Platform.cpp">
+      <Filter>src\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\WndManager\TransparentWnd.cpp">
+      <Filter>src\UI\WndManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpImageUtility.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpMutex.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\Integer.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\WndManager\UP.cpp">
+      <Filter>src\UI\WndManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\DialogWnd.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\LogonWnd.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\MainWnd.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\WndHelper.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Engine\PeerConnectionHelper.cpp">
+      <Filter>src\UI\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpFile.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility\UpHttp.cpp">
+      <Filter>src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crash\CrashManager.cpp">
+      <Filter>src\Crash</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crash\minidump.cpp">
+      <Filter>src\Crash</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\MainTipWnd.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\WbWnd.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Dictionary\UpDict.cpp">
+      <Filter>src\Dictionary</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Dictionary\UpDictManager.cpp">
+      <Filter>src\Dictionary</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdAfx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpStringUtility.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpLock.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpTimer.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpThreadHandler.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Define\Broadcast_type.h">
+      <Filter>src\UI\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Define\MsgBroadcast.h">
+      <Filter>src\UI\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Define\Observer_impl_base.hpp">
+      <Filter>src\UI\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Define\UpDefineMsg.h">
+      <Filter>src\UI\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\WndManager\WndManager.h">
+      <Filter>src\UI\WndManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Global\Base.h">
+      <Filter>src\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Global\Platform.h">
+      <Filter>src\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\WndManager\TransparentWnd.h">
+      <Filter>src\UI\WndManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpImageUtility.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\WndManager\NULLWindow.h">
+      <Filter>src\UI\WndManager</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpMutex.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\Integer.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Define\Up_type.h">
+      <Filter>src\UI\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\WndManager\UP.h">
+      <Filter>src\UI\WndManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Wnd\DialogWnd.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Wnd\LogonWnd.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Wnd\MainWnd.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Wnd\WndHelper.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Engine\PeerConnectionHelper.h">
+      <Filter>src\UI\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpFile.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\UpHttp.h">
+      <Filter>src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crash\CrashManager.h">
+      <Filter>src\Crash</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Crash\minidump.h">
+      <Filter>src\Crash</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Wnd\MainTipWnd.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Wnd\WbWnd.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dictionary\DictDefine.h">
+      <Filter>src\Dictionary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dictionary\FindImp.h">
+      <Filter>src\Dictionary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dictionary\UpDict.h">
+      <Filter>src\Dictionary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dictionary\UpDictManager.h">
+      <Filter>src\Dictionary</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\RongRTCEngine.h">
+      <Filter>src\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\RongRTCEngineVideoRender.h">
+      <Filter>src\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\output\skin\dialog.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="AppSmall.ico">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\output\skin\logon.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="..\output\skin\main.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="..\output\skin\list_member_item.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="..\output\skin\list_message_item.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="..\output\skin\main_tip.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="..\output\skin\wb.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Version.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="App.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

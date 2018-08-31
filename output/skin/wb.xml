@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window size="900,660" caption="0,0,0,32" mininfo="300,300" sizebox="2,2,2,2" roundcorner="2,2">
+  <Font name="Verdana" size="14" bold="false" italic="false" />
+  <VerticalLayout name="bg" bkcolor="#FFFFFFFF">
+    <HorizontalLayout height="31" bkcolor="#FFDDDDDD">
+      <Label width="56"/>
+      <Label name="title" text="" height="31" font="0" align="center" textcolor="#FF000000" />
+      <Button name="minbtn" width="28" height="28" keyboard="false" normalimage="file='common\min_normal.png' source='5,10,33,38'" hotimage="file='common\min_hover.png' source='5,10,33,38'" pushedimage="file='common\min_pushed.png' source='5,10,33,38'"/>
+      <Button name="closebtn" width="28" height="28" keyboard="false" normalimage="file='common\close_normal.png' source='5,10,33,38'" hotimage="file='common\close_hover.png' source='5,10,33,38'" pushedimage="file='common\close_pushed.png' source='5,10,33,38'"/>
+    </HorizontalLayout>
+    <VerticalLayout inset="2,0,2,2">
+      <WebBrowser name="web" bkcolor="#FFFFFFFF"/>
+    </VerticalLayout>
+  </VerticalLayout>
+</Window>

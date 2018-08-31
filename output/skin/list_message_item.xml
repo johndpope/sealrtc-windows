@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+	<ListContainerElement name="list_message_item_layout"  inset="0,5,0,0">
+    <VerticalLayout>
+      <VerticalLayout height="18">
+        <Label name="message_time" height="18" font="1" textcolor="#FF87889B"  align="center" />
+      </VerticalLayout>
+      <VerticalLayout>
+        <Text name="message_text" height="1000" width="225" text="#############" align="center" textcolor="#FF87889B" font="1" endellipsis="true"/>
+      </VerticalLayout>
+    </VerticalLayout>
+  </ListContainerElement>
+</Window>

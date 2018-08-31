@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="UnicodeDebug|Win32">
+      <Configuration>UnicodeDebug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="UnicodeRelease|Win32">
+      <Configuration>UnicodeRelease</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{610BA381-B0B5-4CB1-A4E2-6C2A9106BF0A}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Urapport</RootNamespace>
+    <ProjectName>App</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeRelease|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeRelease|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\LeakDetector\include;$(IncludePath)</IncludePath>
+    <ReferencePath>D:\LeakDetector\bin\Win32;D:\LeakDetector\lib\Win32;$(ReferencePath)</ReferencePath>
+    <OutDir>..\output\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetName>SealRTC_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeRelease|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\output\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <TargetName>SealRTC</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;HAVE_PTHREAD;WIN32;_DEBUG;_CONSOLE;HAVE_SELECT;HAVE_IO_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\src\UI;.\src\Utility;.\src\Crash;.\src\Global;.\src\UI\Control;.\src\UI\Wnd;.\src\UI\WndCommon;.\src\UI\Define;.\src\UI\Engine;.\src\UI\WndManager;.\src\Dictionary;.\src\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>../output/SealRTC_d.exe</OutputFile>
+      <ImportLibrary>
+      </ImportLibrary>
+      <AdditionalDependencies>Imm32.lib;Winmm.lib;Ws2_32.lib;crypt32.lib;Winhttp.lib;Duilib_ud.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;gdiplus.lib;Iphlpapi.lib;mfuuid.lib;msxml6.lib;lib_json_d.lib;wke.lib;RongRTCLib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD</IgnoreSpecificDefaultLibraries>
+      <ProgramDatabaseFile>$(SolutionDir)pdb\$(TargetName).pdb</ProgramDatabaseFile>
+      <Profile>true</Profile>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeRelease|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_WINDOWS;HAVE_PTHREAD;WIN32;NDEBUG;_CONSOLE;HAVE_SELECT;HAVE_IO_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;.\src\UI;.\src\Crash;.\src\Utility;.\src\Global;.\src\UI\Control;.\src\UI\Wnd;.\src\UI\Define;.\src\UI\WndCommon;.\src\UI\Engine;.\src\UI\WndManager;.\src\Dictionary;.\src\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>false</OptimizeReferences>
+      <OutputFile>../output/SealRTC.exe</OutputFile>
+      <ImportLibrary>
+      </ImportLibrary>
+      <AdditionalDependencies>Imm32.lib;Winmm.lib;Ws2_32.lib;crypt32.lib;Winhttp.lib;Duilib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;gdiplus.lib;Iphlpapi.lib;mfuuid.lib;msxml6.lib;lib_json.lib;wke.lib;RongRTCLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD</IgnoreSpecificDefaultLibraries>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <ProgramDatabaseFile>$(SolutionDir)pdb\$(TargetName).pdb</ProgramDatabaseFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="src\Crash\CrashManager.cpp" />
+    <ClCompile Include="src\Crash\minidump.cpp" />
+    <ClCompile Include="src\Dictionary\UpDict.cpp" />
+    <ClCompile Include="src\Dictionary\UpDictManager.cpp" />
+    <ClCompile Include="src\UI\Engine\PeerConnectionHelper.cpp" />
+    <ClCompile Include="src\UI\Wnd\LogonWnd.cpp" />
+    <ClCompile Include="src\UI\Wnd\MainTipWnd.cpp" />
+    <ClCompile Include="src\UI\Wnd\MainWnd.cpp" />
+    <ClCompile Include="src\UI\Wnd\WbWnd.cpp" />
+    <ClCompile Include="src\UI\Wnd\WndHelper.cpp" />
+    <ClCompile Include="src\Utility\Integer.cpp" />
+    <ClCompile Include="src\Global\Platform.cpp" />
+    <ClCompile Include="src\Global\Base.cpp" />
+    <ClCompile Include="src\UI\Define\MsgBroadcast.cpp" />
+    <ClCompile Include="src\UI\WndManager\UP.cpp" />
+    <ClCompile Include="src\UI\WndManager\WndManager.cpp" />
+    <ClCompile Include="src\UI\Wnd\DialogWnd.cpp" />
+    <ClCompile Include="src\Utility\UpFile.cpp" />
+    <ClCompile Include="src\Utility\UpHttp.cpp" />
+    <ClCompile Include="src\Utility\UpImageUtility.cpp" />
+    <ClCompile Include="src\Utility\UpStringUtility.cpp" />
+    <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="src\Utility\UpLock.cpp" />
+    <ClCompile Include="src\Utility\UpTimer.cpp" />
+    <ClCompile Include="src\Utility\UpThreadHandler.cpp" />
+    <ClCompile Include="src\UI\WndManager\TransparentWnd.cpp" />
+    <ClCompile Include="src\Utility\UpMutex.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Crash\CrashManager.h" />
+    <ClInclude Include="src\Crash\minidump.h" />
+    <ClInclude Include="src\Dictionary\DictDefine.h" />
+    <ClInclude Include="src\Dictionary\FindImp.h" />
+    <ClInclude Include="src\Dictionary\UpDict.h" />
+    <ClInclude Include="src\Dictionary\UpDictManager.h" />
+    <ClInclude Include="src\include\RongRTCEngine.h" />
+    <ClInclude Include="src\include\RongRTCEngineVideoRender.h" />
+    <ClInclude Include="src\UI\Engine\PeerConnectionHelper.h" />
+    <ClInclude Include="src\UI\Wnd\LogonWnd.h" />
+    <ClInclude Include="src\UI\Wnd\MainTipWnd.h" />
+    <ClInclude Include="src\UI\Wnd\MainWnd.h" />
+    <ClInclude Include="src\UI\Wnd\WbWnd.h" />
+    <ClInclude Include="src\UI\Wnd\WndHelper.h" />
+    <ClInclude Include="src\Utility\Integer.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\UI\WndManager\NULLWindow.h" />
+    <ClInclude Include="src\Global\Platform.h" />
+    <ClInclude Include="src\Global\Base.h" />
+    <ClInclude Include="src\UI\Define\Broadcast_type.h" />
+    <ClInclude Include="src\UI\Define\MsgBroadcast.h" />
+    <ClInclude Include="src\UI\Define\Observer_impl_base.hpp" />
+    <ClInclude Include="src\UI\Define\UpDefineMsg.h" />
+    <ClInclude Include="src\UI\Define\Up_type.h" />
+    <ClInclude Include="src\UI\WndManager\UP.h" />
+    <ClInclude Include="src\UI\WndManager\WndManager.h" />
+    <ClInclude Include="src\UI\Wnd\DialogWnd.h" />
+    <ClInclude Include="src\Utility\UpFile.h" />
+    <ClInclude Include="src\Utility\UpHttp.h" />
+    <ClInclude Include="src\Utility\UpStringUtility.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="src\Utility\UpLock.h" />
+    <ClInclude Include="src\Utility\UpTimer.h" />
+    <ClInclude Include="src\Utility\UpThreadHandler.h" />
+    <ClInclude Include="src\UI\WndManager\TransparentWnd.h" />
+    <ClInclude Include="src\Utility\UpImageUtility.h" />
+    <ClInclude Include="src\Utility\UpMutex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\output\skin\dialog.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\output\skin\list_member_item.xml" />
+    <None Include="..\output\skin\list_message_item.xml" />
+    <None Include="..\output\skin\logon.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\output\skin\main.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\output\skin\main_tip.xml" />
+    <None Include="..\output\skin\wb.xml" />
+    <None Include="AppSmall.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="App.rc" />
+    <ResourceCompile Include="Version.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App", "App\App.vcxproj", "{610BA381-B0B5-4CB1-A4E2-6C2A9106BF0A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		UnicodeDebug|x86 = UnicodeDebug|x86
+		UnicodeRelease|x86 = UnicodeRelease|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{610BA381-B0B5-4CB1-A4E2-6C2A9106BF0A}.UnicodeDebug|x86.ActiveCfg = UnicodeDebug|Win32
+		{610BA381-B0B5-4CB1-A4E2-6C2A9106BF0A}.UnicodeDebug|x86.Build.0 = UnicodeDebug|Win32
+		{610BA381-B0B5-4CB1-A4E2-6C2A9106BF0A}.UnicodeRelease|x86.ActiveCfg = UnicodeRelease|Win32
+		{610BA381-B0B5-4CB1-A4E2-6C2A9106BF0A}.UnicodeRelease|x86.Build.0 = UnicodeRelease|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window size="1068,660" caption="0,0,0,31" mininfo="1068,660">
+  <Font name="Verdana" size="11" bold="false" italic="false" />
+  <Font name="Verdana" size="12" bold="false" italic="false" />
+  <Font name="Verdana" size="14" bold="false" italic="false" />
+  <Font name="Verdana" size="18" bold="false" italic="false" />
+  <Default name="HScrollBar" value="width=&quot;45&quot; height=&quot;8&quot; showbutton1=&quot;false&quot; showbutton2=&quot;false&quot; thumbnormalimage=&quot;file=&apos;main\scrollbar_normal.png&apos; corner=&apos;10,0,10,0&apos;&quot; thumbhotimage=&quot;file=&apos;main\scrollbar_hot.png&apos; corner=&apos;10,0,10,0&apos;&quot; thumbpushedimage=&quot;file=&apos;main\scrollbar_hot.png&apos; corner=&apos;10,0,10,0&apos;&quot; bknormalimage=&quot;file=&apos;main\scrollbar_normal_bg.png&apos; corner=&apos;10,0,10,0&apos;&quot; bkhotimage=&quot;file=&apos;main\scrollbar_hot_bg.png&apos; corner=&apos;10,0,10,0&apos;&quot; bkpushedimage=&quot;file=&apos;main\scrollbar_hot_bg.png&apos; corner=&apos;10,0,10,0&apos;&quot;" />
+  <Default name="VScrollBar" value="width=&quot;8&quot; height=&quot;45&quot; showbutton1=&quot;false&quot; showbutton2=&quot;false&quot; thumbnormalimage=&quot;file=&apos;main\list_scrollbar_normal.png&apos; corner=&apos;0,10,0,10&apos;&quot; thumbhotimage=&quot;file=&apos;main\list_scrollbar_hot.png&apos; corner=&apos;0,10,0,10&apos;&quot; thumbpushedimage=&quot;file=&apos;main\list_scrollbar_hot.png&apos; corner=&apos;0,10,0,10&apos;&quot; bknormalimage=&quot;file=&apos;main\scrollbar_normal_bg.png&apos; corner=&apos;0,10,0,10&apos;&quot; bkhotimage=&quot;file=&apos;main\list_scrollbar_hot_bg.png&apos; corner=&apos;0,10,0,10&apos;&quot; bkpushedimage=&quot;file=&apos;main\list_scrollbar_hot_bg.png&apos; corner=&apos;0,10,0,10&apos;&quot;" />
+  <VerticalLayout name="bg" bkcolor="#FFFFFFFF">
+    <HorizontalLayout name="top_layout" height="31" bkcolor="#FFDDDDDD" inset="2,0,2,0" visible="true">
+      <Button name="change_video_size_btn" width="84" height="28" text="切换分辨率" font="2" keyboard="false" visible="true" />
+      <Label />
+      <Label name="channel_id" height="31" font="2" align="center" textcolor="#FF000000" />
+      <Label />
+      <Label width="112" />
+      <Button name="minbtn" width="28" height="28" keyboard="false" normalimage="file='common\min_normal.png' source='5,10,33,38'" hotimage="file='common\min_hover.png' source='5,10,33,38'" pushedimage="file='common\min_pushed.png' source='5,10,33,38'"/>
+      <Button name="closebtn" width="28" height="28" keyboard="false" normalimage="file='common\close_normal.png' source='5,10,33,38'" hotimage="file='common\close_hover.png' source='5,10,33,38'" pushedimage="file='common\close_pushed.png' source='5,10,33,38'"/>
+    </HorizontalLayout>
+    <HorizontalLayout>
+      <VerticalLayout bkcolor="#FFFFFFFF">
+        <Video name="local_video" fullscreen="false" bkimage="" bkcolor="#FF000000" inset="0,509,0,0">
+          <Label name="net_signal" float="true" pos="10,10,71,19" bkimage="file='main\signal_5.png'" />
+          <GifAnim name="local_speaking_flag" float="true" pos="2,42,71,42" autoplay="true" />
+          <HorizontalLayout name="connection_info_layout" float="true" pos="73,25,183,25">
+            <Label name="connect_time" height="20" font="1" align="left" textcolor="#FFFFFFFF" text=""/>
+          </HorizontalLayout>
+          <VerticalLayout name="call_layout" float="true" pos="616,16,780,16">
+            <Label name="call_name_portrait" float="true" pos="36,36,128,128" font="3" align="center" textcolor="#FFFFFFFF" borderround="92,92" />
+            <Label name="call_playing" width="164" height="164" action="loop" bkimage="file='main\call_palying_bg.png' source='0,0,164,164' step='7'"/>      
+            <Button name="call_refuse_btn" float="true" pos="0,150,46,196" width="46" height="46" keyboard="false" normalimage="file='main\refuse.png'"/>
+            <Button name="call_agree_btn" float="true" pos="118,150,164,196" width="46" height="46" keyboard="false" normalimage="file='main\agree.png'"/>
+          </VerticalLayout>
+          <Button name="fullscreen_restore_btn" float="true" pos="785,10,825,50" normalimage="file='main\fullscreen_normal.png'" hotimage="file='main\fullscreen_hot.png'" pushedimage="file='main\fullscreen_hot.png'"/>
+          <Label name="local_video_tip" float="true" pos="10,305,818,305" align="center" font="3" text="" textcolor="#FFFFFFFF"/>
+          <Label name="local_name_portrait" float="true" pos="380,275,460,275" align="center" font="3" textcolor="#FFFFFFFF" borderround="2,2" action="loop2" bkimage="file='main\loading_42.png' source='0,0,42,42' dest='19,19,61,61' step='35'"/>
+          <VerticalLayout height="120" inset="5,0,5,14" bkimage="file='main\masking_bg.png' fade='150'">
+            <HorizontalLayout height="26">
+              <Label />
+              <Button name="up_down_btn" userdata="1" width="26" height="15" keyboard="false" normalimage="file='main\icon_down.png'"/>
+              <Label />
+            </HorizontalLayout>
+            <HorizontalLayout  name ="remote_video_layout" childpadding="3" height="80" hscrollbar="true">
+            </HorizontalLayout>
+          </VerticalLayout>
+        </Video>
+      </VerticalLayout>
+      <VerticalLayout name="right_layout" width="231" visible="true"/>
+      <HorizontalLayout name="right_float_layout" float="true" pos="837,0,1068,629" userdata="0" >
+        <VerticalLayout name="show_hide_layout" width="15" visible="false">
+          <HorizontalLayout />
+          <Button name="show_hide_right_float_layout_btn" width="15" height="100" bkimage="file='main\bar_left.png'"/>
+          <HorizontalLayout />
+        </VerticalLayout>
+        <VerticalLayout bkcolor="#FFFFFFFF">
+          <HorizontalLayout height="26" >
+            <Option name="notification_list_btn" height="26" text="" textcolor="#FFFFFFFF" userdata="0" group="1" selected="true" normalimage="file='main\bg_2.png'" selectedimage="file='main\bg_1.png'" />
+            <Option name="member_list_btn" height="26" text="" textcolor="#FFFFFFFF" userdata="1" group="1" normalimage="file='main\bg_2.png'" selectedimage="file='main\bg_1.png'" />
+          </HorizontalLayout>
+          <TabLayout name="tab_list_layout">
+            <HorizontalLayout width="231">
+              <List name="notification_list" menu="false" needpaintbkcolor="false" childpadding="1" header="hidden" vscrollbar="true" itemselectedbkcolor="#00FFFFFF" itemhotbkcolor="#00FFFFFF" />
+            </HorizontalLayout>
+            <HorizontalLayout width="231">
+              <List name="member_list" menu="false" needpaintbkcolor="false" childpadding="1" header="hidden" vscrollbar="true" itemlinecolor="#FFEBEBEB" itemselectedbkcolor="#00FFFFFF" itemhotbkcolor="#00FFFFFF" />
+            </HorizontalLayout>
+          </TabLayout>
+          <VerticalLayout visible="false" name="vmore" float="true" pos="153,233,233,389">
+            <Button name="hd_smooth_switch_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF"  foreimage="file='main\smooth.png' dest='31,16,47,32'" bordersize="1" bordercolor="#FFF4F4F4" />
+            <Button name="request_speak_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_request_speak_normal.png' dest='31,16,43,31'" bordersize="1" bordercolor="#FFF4F4F4"/>
+          </VerticalLayout>
+          <TileLayout width="231" height="240" columns="3" childpadding="1" bkcolor="#FFF4F4F4" inset="2,2,1,1">
+            <Button name="get_invite_url_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_invite_normal.png' dest='30,16,46,31'" />
+            <Button name="request_host_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_request_host_normal.png' dest='30,16,44,31'" />
+            <Button name="more_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\more.png' dest='30,16,46,32'" />
+
+            <Button name="whiteboard_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_wb_normal.png' dest='29,16,46,28'" />
+            <Button name="screen_share_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_share_normal.png' dest='29,16,45,31'" />
+            <Button name="loudspeaker_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_open_ loudspeaker.png' dest='30,16,46,30'" />
+
+            <Button name="camera_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_open_camera.png' dest='32,16,43,30'" />
+            <Button name="mic_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FF000000" bkcolor="#FFFFFFFF" hotbkcolor="#FFDEF3FF" foreimage="file='main\icon_open_mic.png' dest='31,16,43,30'" />
+            <Button name="hangup_btn" width="75" height="78" userdata="1" font="1" textpadding="0,10,0,0" text="" textcolor="#FFFFFFFF" bkcolor="#FFE64D45" hotbkcolor="#FFE64D45" foreimage="file='main\icon_hangup.png' dest='28,16,47,23'" />
+          </TileLayout>
+        </VerticalLayout>
+      </HorizontalLayout>
+    </HorizontalLayout>
+    <VerticalLayout name="enalbed_layout" float="true" pos="0,0,1068,0"/>
+  </VerticalLayout>
+</Window>

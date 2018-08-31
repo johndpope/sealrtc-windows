@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window size="230,160" caption="0,0,0,32" mininfo="230,160" maxinfo="230,160" roundcorner="2,2">
+  <Font name="Verdana" size="11" bold="false" italic="false" />
+  <Font name="Verdana" size="12" bold="false" italic="false" />
+  <Font name="Verdana" size="14" bold="false" italic="false" />
+
+  <VerticalLayout name="bg" width="230" height="160" bkcolor="#FFFFFFFF">
+    <VerticalLayout float="true" width="230" height="160" inset="0,20,0,0" bkcolor="#FFDDDDDD">
+      <Button name="tip_close_btn" float="true" pos="213,3,226,16" bkimage="file='main\tip_close.png'"/>
+      <VerticalLayout width="230" height="100" bkcolor="#FFFFFFFF">
+        <Text name="tip_info" width="230" height="90" textpadding="18,30,18,10" text="#############" align="center" textcolor="#FF000000"  font="2" endellipsis="true"/>
+      </VerticalLayout>
+      <HorizontalLayout width="230" height="40" childpadding="18" bkcolor="#FFFFFFFF">
+        <Label />
+        <Button name="tip_yes_btn" width="80" height="28" text="" textcolor="#FF000000" hottextcolor="#FFFFFFFF" borderround="4,4" normalimage="file='main\tip_normal.png'" hotimage="file='main\tip_hot.png'" pushedimage="file='main\tip_hot.png'" />
+        <Button name="tip_no_btn" width="80" height="28" text="" textcolor="#FF000000" hottextcolor="#FFFFFFFF" borderround="4,4" normalimage="file='main\tip_normal.png'" hotimage="file='main\tip_hot.png'" pushedimage="file='main\tip_hot.png'" />
+        <Label />
+      </HorizontalLayout>
+    </VerticalLayout>
+  </VerticalLayout>
+</Window>
