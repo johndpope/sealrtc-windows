@@ -11,12 +11,6 @@
 #include <objbase.h>
 #include <map>
 #include <GdiPlus.h>
-namespace DuiLib 
-{
-	// tString is a TCHAR std::string
-	typedef std::basic_string<TCHAR> tString;
-}
-
 #include "..\Duilib\Duilib\UIlib.h"
 
 #ifndef NO_USING_DUILIB_NAMESPACE
@@ -32,8 +26,8 @@ using namespace std;
 #include "MsgBroadcast.h"
 
 #define APP_NAME _T("SealRTC")
-#define APP_VERSION " V2.1.0"
-#define APP_Release
+#define APP_VERSION " V3.0.0"
+//#define APP_Release
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 

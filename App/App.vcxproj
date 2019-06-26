@@ -44,7 +44,7 @@
     <ReferencePath>D:\LeakDetector\bin\Win32;D:\LeakDetector\lib\Win32;$(ReferencePath)</ReferencePath>
     <OutDir>..\output\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <TargetName>SealRTC_d</TargetName>
+    <TargetName>SealRTC_ud</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='UnicodeRelease|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>../output/SealRTC_d.exe</OutputFile>
+      <OutputFile>../output/SealRTC_ud.exe</OutputFile>
       <ImportLibrary>
       </ImportLibrary>
       <AdditionalDependencies>Imm32.lib;Winmm.lib;Ws2_32.lib;crypt32.lib;Winhttp.lib;Duilib_ud.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;gdiplus.lib;Iphlpapi.lib;mfuuid.lib;msxml6.lib;lib_json_d.lib;wke.lib;RongRTCLib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -98,7 +98,7 @@
       <OutputFile>../output/SealRTC.exe</OutputFile>
       <ImportLibrary>
       </ImportLibrary>
-      <AdditionalDependencies>Imm32.lib;Winmm.lib;Ws2_32.lib;crypt32.lib;Winhttp.lib;Duilib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;gdiplus.lib;Iphlpapi.lib;mfuuid.lib;msxml6.lib;lib_json.lib;wke.lib;RongRTCLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Imm32.lib;Winmm.lib;Ws2_32.lib;crypt32.lib;Winhttp.lib;Duilib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;gdiplus.lib;Iphlpapi.lib;mfuuid.lib;msxml6.lib;lib_json.lib;wke.lib;RongRtcLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\lib</AdditionalLibraryDirectories>
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
       <IgnoreSpecificDefaultLibraries>LIBCMTD</IgnoreSpecificDefaultLibraries>
@@ -116,6 +116,7 @@
     <ClCompile Include="src\UI\Wnd\LogonWnd.cpp" />
     <ClCompile Include="src\UI\Wnd\MainTipWnd.cpp" />
     <ClCompile Include="src\UI\Wnd\MainWnd.cpp" />
+    <ClCompile Include="src\UI\Wnd\StateInfoWnd.cpp" />
     <ClCompile Include="src\UI\Wnd\WbWnd.cpp" />
     <ClCompile Include="src\UI\Wnd\WndHelper.cpp" />
     <ClCompile Include="src\Utility\Integer.cpp" />
@@ -144,11 +145,11 @@
     <ClInclude Include="src\Dictionary\UpDict.h" />
     <ClInclude Include="src\Dictionary\UpDictManager.h" />
     <ClInclude Include="src\include\RongRTCEngine.h" />
-    <ClInclude Include="src\include\RongRTCEngineVideoRender.h" />
     <ClInclude Include="src\UI\Engine\PeerConnectionHelper.h" />
     <ClInclude Include="src\UI\Wnd\LogonWnd.h" />
     <ClInclude Include="src\UI\Wnd\MainTipWnd.h" />
     <ClInclude Include="src\UI\Wnd\MainWnd.h" />
+    <ClInclude Include="src\UI\Wnd\StateInfoWnd.h" />
     <ClInclude Include="src\UI\Wnd\WbWnd.h" />
     <ClInclude Include="src\UI\Wnd\WndHelper.h" />
     <ClInclude Include="src\Utility\Integer.h" />
@@ -176,6 +177,8 @@
     <ClInclude Include="src\Utility\UpMutex.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\output\setting\en.xml" />
+    <None Include="..\output\setting\zh.xml" />
     <None Include="..\output\skin\dialog.xml">
       <SubType>Designer</SubType>
     </None>
@@ -188,6 +191,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="..\output\skin\main_tip.xml" />
+    <None Include="..\output\skin\state_info.xml" />
     <None Include="..\output\skin\wb.xml" />
     <None Include="AppSmall.ico" />
   </ItemGroup>

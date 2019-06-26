@@ -4,6 +4,7 @@
 #include "LogonWnd.h"
 #include "MainWnd.h"
 #include "MainTipWnd.h"
+#include "StateInfoWnd.h"
 #include "WbWnd.h"
 
 void InitAppWnd()
@@ -11,6 +12,7 @@ void InitAppWnd()
 	LogonWnd::RegisterWnd();
 	MainWnd::RegisterWnd();
 	MainTipWnd::RegisterWnd();
+	StateInfoWnd::RegisterWnd();
 	WbWnd::RegisterWnd();
 }
 

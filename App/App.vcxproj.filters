@@ -52,6 +52,9 @@
     <Filter Include="src\Dictionary">
       <UniqueIdentifier>{0472cbc2-a9f8-429b-9482-12691d982d3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\UI\setting">
+      <UniqueIdentifier>{fa00b24f-4c09-4358-89c2-1c6a098742ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StdAfx.cpp">
@@ -127,6 +130,9 @@
       <Filter>src\Crash</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\Wnd\MainTipWnd.cpp">
+      <Filter>src\UI\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Wnd\StateInfoWnd.cpp">
       <Filter>src\UI\Wnd</Filter>
     </ClCompile>
     <ClCompile Include="src\UI\Wnd\WbWnd.cpp">
@@ -230,6 +236,9 @@
     <ClInclude Include="src\UI\Wnd\MainTipWnd.h">
       <Filter>src\UI\Wnd</Filter>
     </ClInclude>
+    <ClInclude Include="src\UI\Wnd\StateInfoWnd.h">
+      <Filter>src\UI\Wnd</Filter>
+    </ClInclude>
     <ClInclude Include="src\UI\Wnd\WbWnd.h">
       <Filter>src\UI\Wnd</Filter>
     </ClInclude>
@@ -246,9 +255,6 @@
       <Filter>src\Dictionary</Filter>
     </ClInclude>
     <ClInclude Include="src\include\RongRTCEngine.h">
-      <Filter>src\include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\include\RongRTCEngineVideoRender.h">
       <Filter>src\include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -274,8 +280,17 @@
     <None Include="..\output\skin\main_tip.xml">
       <Filter>src\UI\Xml</Filter>
     </None>
+    <None Include="..\output\skin\state_info.xml">
+      <Filter>src\UI\Xml</Filter>
+    </None>
     <None Include="..\output\skin\wb.xml">
       <Filter>src\UI\Xml</Filter>
+    </None>
+    <None Include="..\output\setting\en.xml">
+      <Filter>src\UI\setting</Filter>
+    </None>
+    <None Include="..\output\setting\zh.xml">
+      <Filter>src\UI\setting</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

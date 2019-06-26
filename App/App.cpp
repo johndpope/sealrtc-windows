@@ -11,15 +11,13 @@ void Init()
 	InitAppWnd();
 	InitMsgBroadcast();
 	CTextRes::SetIFind(FindImp::GetInstance());
-	PeerConnectionHelper::CreatePeerConnectionHelper();
 	CCrashManager::CreateInstance();
 }
 
 void Destroy()
 {
-	RongRTCEngine::UnInit();
+	//RongRTCUnInit();
 	CCrashManager::DestoryInstance();
-	PeerConnectionHelper::DestoryPeerConnectionHelper();
 	MsgBroadcast::GetMsgBroadcast()->SetEnable(false);
 	UpDictManager::DeleteInstance();
 	delete CWndManager::GetWndManager();

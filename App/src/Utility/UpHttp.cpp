@@ -514,7 +514,7 @@ BOOL UpHttp::HttpsPost(const char*  url, const void* data, DWORD size, std::wstr
 
 	if (mConnect)
 	{
-		mRequest = WinHttpOpenRequest(mConnect, L"PUT", uc.lpszUrlPath, NULL, 
+		mRequest = WinHttpOpenRequest(mConnect, L"POST", uc.lpszUrlPath, NULL, 
 														WINHTTP_NO_REFERER, 
 														WINHTTP_DEFAULT_ACCEPT_TYPES, 
 														WINHTTP_FLAG_SECURE);

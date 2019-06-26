@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window size="640,650" caption="0,0,0,32" mininfo="640,650" maxinfo="640,650" roundcorner="2,2">
+  <Font name="Verdana" size="11" bold="false" italic="false" />
+  <Font name="Verdana" size="12" bold="false" italic="false" />
+  <Font name="Verdana" size="14" bold="false" italic="false" />
+
+  <VerticalLayout name="bg" width="640" height="650" bkcolor="#FFFFFFFF">
+    <HorizontalLayout width="640" height="31" bkcolor="#FFDDDDDD">
+      <Label text="信息统计" height="31" font="2" align="center" textcolor="#FF000000" />
+      <Button name="minbtn" float="true" pos="582,0,610,28" keyboard="false" normalimage="file='common\min_normal.png' source='5,10,33,38'" hotimage="file='common\min_hover.png' source='5,10,33,38'" pushedimage="file='common\min_pushed.png' source='5,10,33,38'"/>
+      <Button name="closebtn" float="true" pos="610,0,638,28" keyboard="false" normalimage="file='common\close_normal.png' source='5,10,33,38'" hotimage="file='common\close_hover.png' source='5,10,33,38'" pushedimage="file='common\close_pushed.png' source='5,10,33,38'"/>
+    </HorizontalLayout>
+    <VerticalLayout width="640" inset="4,4,4,4">
+      <VerticalLayout  bordersize="1" bordercolor="#FFD1D1D1" bkcolor="#FF000000" inset="6,6,6,6">
+        <Label height="20" text="网络探测" textcolor="#FFFFFFFF" font="2" />
+        <TileLayout width="620" height="64" bkcolor="#FFFFFFFF" columns="3" childpadding="1" inset="1,1,1,1">
+          <Label width="205" height="20" align="center" text="通道名称" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          <Label width="205" height="20" align="center" text="码率(kbps)" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          <Label width="206" height="20" align="center" text="音/视频往返时延(ms)" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+
+          <Label width="205" height="20" align="center" text="发送" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          <Label name="total_send_bitrate" width="205" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          <Label name="send_rtt" width="206" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+
+          <Label width="205" height="20" align="center" text="接受" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          <Label name="total_receive_bitrate" width="205" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          <Label name="receive_rtt" width="206" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+        </TileLayout>
+        <Label height="5" />
+        <Label height="20" text="与会者" textcolor="#FFFFFFFF" font="2" />
+        <VerticalLayout name="data_layout" width="620" height="484" bkcolor="#FFFFFFFF" inset="1,1,1,0" >
+          <HorizontalLayout childpadding="1">
+            <Label width="168" height="20" align="center" text="流ID" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label width="80" height="20" align="center" text="通道名称" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label width="80" height="20" align="center" text="Codec" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label width="87" height="20" align="center" text="分辨率" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label width="50" height="20" align="center" text="帧率" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label width="87" height="20" align="center" text="码率(kbps)" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label width="60" height="20" align="center" text="丢包率(%)" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+          <HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout><HorizontalLayout name="data_item_layout" childpadding="1">
+            <Label name="data_item_user_id" width="168" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000" endellipsis="true"/>
+            <Label name="data_item_name" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_codec" width="80" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_solution" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_fram_rate" width="50" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_bit_rate" width="87" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+            <Label name="data_item_lost_pecket_percent" width="60" height="20" align="center" text="--" textcolor="#FFFFFFFF" font="0" bkcolor="#FF000000"/>
+          </HorizontalLayout>
+        </VerticalLayout>
+      </VerticalLayout>    
+    </VerticalLayout>
+  </VerticalLayout>
+</Window>

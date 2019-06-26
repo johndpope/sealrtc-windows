@@ -17,5 +17,6 @@
 #define WM_WINDOWS_STYLE_CHANGED		WM_USER + 309
 /*Quite Exe*/
 #define WM_QUITE_EXE									WM_USER + 310
+#define WM_VIDEO_DATA								WM_USER + 311
 
 

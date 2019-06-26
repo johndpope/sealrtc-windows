@@ -7,11 +7,7 @@
 #include "UpDictManager.h"
 #include "UpStringUtility.h"
 
-const CDuiString strForbidBigVideoRenderBg = _T("file='main\\only_audio_120.png' dest='353,250,473,370'");
-const CDuiString strForbidSmallVideoRenderBg = _T("file='main\\only_audio_48.png' dest='42,42,90,90'");
-
-const CDuiString strBigScreenSharedBg = _T("file='main\\screen_shared_bg_124.png' dest='351,249,475,373'");
-const CDuiString strSmallScreenSharedBg = _T("file='main\\screen_shared_bg_124.png' dest='4,4,128,128'");
+const CDuiString strSmallOnlyAudioBg = _T("file='main\\audio_only.png'");
 
 const CDuiString strCameraOpen = _T("file='main\\icon_open_camera.png' dest='32,16,43,30'");
 const CDuiString strCameraClose = _T("file='main\\icon_close_camera.png' dest='32,16,43,30'");
@@ -31,90 +27,54 @@ const CDuiString strShareHot = _T("file='main\\icon_share_hot.png' dest='29,16,4
 const CDuiString strUpBtnBg = _T("main\\icon_up.png");
 const CDuiString strDownBtnBg = _T("main\\icon_down.png");
 
-const CDuiString strPortraitHost = _T("file='main\\icon_host_member.png'");
-const CDuiString strPortraitNormal = _T("file='main\\icon_normal_member.png'");
-const CDuiString strPortraitObserver = _T("file='main\\icon_observer_member.png'");
-
 const CDuiString strItemMicOpenBtnBg = _T("file='main\\icon_open_mic.png' dest='1,0,13,14'");
 const CDuiString strItemMicCloseBtnBg = _T("file='main\\icon_close_mic.png' dest='1,0,13,14'");
 
 const CDuiString strItemCameraOpenBtnBg = _T("file='main\\icon_open_camera.png' dest='2,0,13,14'");
 const CDuiString strItemCameraCloseBtnBg = _T("file='main\\icon_close_camera.png' dest='2,0,13,14'");
 
-const CDuiString strItemUpLevelBtnBg = _T("file='main\\icon_up_level.png' dest='2,1,12,14'");
-const CDuiString strItemDownLevelBtnBg = _T("file='main\\icon_down_level.png' dest='2,1,12,14'");
-
-const CDuiString strSignalBg_0 = _T("file='main\\signal_0.png'");
-const CDuiString strSignalBg_1 = _T("file='main\\signal_1.png'");
-const CDuiString strSignalBg_2 = _T("file='main\\signal_2.png'");
-const CDuiString strSignalBg_3 = _T("file='main\\signal_3.png'");
-const CDuiString strSignalBg_4 = _T("file='main\\signal_4.png'");
-const CDuiString strSignalBg_5 = _T("file='main\\signal_5.png'");
-
-const CDuiString strFullScreenNormal = _T("file='main\\fullscreen_normal.png'");
-const CDuiString strFullScreenHover = _T("file='main\\fullscreen_hot.png'");
-const CDuiString strFullScreenPushed = _T("file='main\\fullscreen_hot.png'");
-
-const CDuiString strResotreNormal = _T("file='main\\restore_normal.png'");
-const CDuiString strResotreHover = _T("file='main\\restore_hot.png'");
-const CDuiString strResotrePushed = _T("file='main\\restore_hot.png'");
-
-const CDuiString strLeftBar = _T("file='main\\bar_left.png'");
-const CDuiString strRightBar = _T("file='main\\bar_right.png'");
-
-const CDuiString strHDBtnBg = _T("file = 'main\\hd.png' dest = '31,16,47,32'");
-const CDuiString strSmoothBtnBg = _T("file='main\\smooth.png' dest='31,16,47,32'");
-
 IMPL_APPWND_CONTROL(MainWnd, ID_WND_MAIN)
 
 MainWnd::MainWnd(void) :
-	m_bIsExistApp(false),
-	m_iConnectionSecond(0),
-	m_bHaveExistWB(false),
-	m_bCameraExist(true),
+	m_bQuiteApp(false),
 	m_bFirstJionChannel(true),
-	m_bFullScreen(false),
-	m_iNowResolutionType(-1)
+	m_bMuteMic(false),
+	m_bMuteCamera(false),
+	m_pLocalVideoCtrl(NULL),
+	m_pRemoteVideoLayout(NULL),
+	m_pUserList(NULL),
+	m_iConnectionSecond(0)
 {
 	SetSkinFile(_T("main.xml"));
 }
 
 MainWnd::~MainWnd(void)
 {
-	ClearVideoRender();
+	for (std::map<std::string, UserInfo*>::iterator it = m_mapUsersInfo.begin(); it != m_mapUsersInfo.end(); ++it)
+	{
+		delete it->second;
+	}
+	m_mapUsersInfo.clear();
+	for (std::list<StreamInfo*>::iterator it = m_listStreamsInfo.begin(); it != m_listStreamsInfo.end(); ++it)
+	{
+		delete *it;
+	}
+	m_listStreamsInfo.clear();
 	m_clConnectionTimer.Stop();
-	m_clCallRequestTimer.Stop();
 }
 
 NOTIFY_BEGIN(MainWnd)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("change_video_size_btn"), OnChangeVideoSizeBtn)
+ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("show_info_btn"), OnClickShowInfoBtn)
 ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("closebtn"), OnClickCloseBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("hangup_btn"), OnClickHangeupBtn)
+ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("screen_share_btn"), OnClickScreenShareBtn)
 ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("camera_btn"), OnClickCameraBtn)
 ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("mic_btn"), OnClickMicBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("loudspeaker_btn"), OnClickLoudSpeakerBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("whiteboard_btn"), OnClickWBBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("get_invite_url_btn"), OnClickInviteBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("screen_share_btn"), OnClickScreenShareBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("request_host_btn"), OnGetHostPower)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("exchange_video_btn"), OnExchangeVideoBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("up_down_btn"), OnClickUpAndDownBtn)
+ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("loudspeaker_btn"), OnClickSpeakerBtn)
+ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("hangup_btn"), OnClickHangeupBtn)
 ON_NOTIFY_MSG(DUI_MSGTYPE_SELECTCHANGED, _T("notification_list_btn"), OnTabOptionChanged)
 ON_NOTIFY_MSG(DUI_MSGTYPE_SELECTCHANGED, _T("member_list_btn"), OnTabOptionChanged)
-ON_NOTIFY_MSG(DUI_MSGTYPE_MOUSEENTER, _T("list_member_item_layout"), OnEnterMemberListItem)
-ON_NOTIFY_MSG(DUI_MSGTYPE_MOUSELEAVE, _T("list_member_item_layout"), OnLeaveMemberListItem)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("item_audio_btn"), OnClickAudioBtnOnMemberList)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("item_video_btn"), OnClickVideoBtnOnMemberList)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("item_up_down_level_btn"), OnClickUpDownLevelBtnOnMemberList)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("item_delete_member_btn"), OnClickDeleteMemberBtnOnMemberList)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("call_refuse_btn"), OnClickRefuseCall)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("call_agree_btn"), OnClickAgreeCall)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("request_speak_btn"), OnClickRequestSpeak)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("fullscreen_restore_btn"), OnClickFullScreenOrRestore)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("show_hide_right_float_layout_btn"), OnClickShowOrHideRightFloatLayout)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("more_btn"), OnClickMoreBtn)
-ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("hd_smooth_switch_btn"), OnClickHDSmoothSwitchBtn)
-
+ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("exchange_video_btn"), OnExchangeBtn)
+ON_NOTIFY_MSG(DUI_MSGTYPE_CLICK, _T("up_down_btn"), OnClickUpAndDownBtn)
 NOTIFY_END()
 
 LRESULT MainWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -123,18 +83,15 @@ LRESULT MainWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	BOOL bHandled = TRUE;
 	switch (uMsg)
 	{
-	case WM_KEYDOWN:
+	case WM_VIDEO_DATA:
 	{
-		if (LOWORD(wParam) == VK_ESCAPE)
+		MsgItem* pMsgItem = (MsgItem*)wParam;
+		if (pMsgItem)
 		{
-			if (m_bFullScreen)
-			{
-				m_bFullScreen = false;
-				::SetWindowPos(m_hWnd, NULL, m_rcOldWnd.left, m_rcOldWnd.top, m_rcOldWnd.right - m_rcOldWnd.left, m_rcOldWnd.bottom - m_rcOldWnd.top, SWP_NOZORDER);
-				SetFullScreenAndRestoreBtn(false);
-				CVerticalLayoutUI* pv = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("vmore")));
-				pv->SetAttribute(_T("pos"), _T("153,233,233,389"));
-			}
+			std::string strStreamId = pMsgItem->GetBuf(0);
+			BITMAPINFO* pBitmapInfo = (BITMAPINFO*)pMsgItem->GetId(0);
+			unsigned char* pData = (unsigned char*)pMsgItem->GetId(1);
+			RenderVideoData(strStreamId, pBitmapInfo, pData);
 		}
 	}
 	break;
@@ -142,438 +99,124 @@ LRESULT MainWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (wParam)
 		{
-			case BDT_JION_CAHNNEL_OK:
+			case BDT_CONNECT_SIGNAL_SERVER:
 			{
-				if (m_bFirstJionChannel)
+				RongRTCEngine::JoinRoom(PeerConnectionHelper::m_strChannelId.c_str(), RongRTCRoomType_Normal, JoinRoomCallBack::GetInstance());
+			}
+			break;
+			case BDT_JOIN_ROOM_OK:
+			{
+				CDuiString strTitleText = UPSTR(main_meeting_room).c_str();
+				strTitleText.Append(_T(" "));
+				strTitleText.Append(UpStringUtility::UTF8ToUnicode(PeerConnectionHelper::m_strChannelId).c_str());
+				CLabelUI* pTitle = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("channel_id")));
+				if (pTitle) pTitle->SetText(strTitleText);
+				
+				if (m_clConnectionTimer.GetIsWork())
 				{
-					DoUserJoinChannel(PeerConnectionHelper::m_strUserId, m_strName.GetData(), PeerConnectionHelper::m_iMediaType, PeerConnectionHelper::m_iRoleType);
+					m_clConnectionTimer.Stop();
+					m_iConnectionSecond = 0;
+				}
+				m_clConnectionTimer.Start(1000, this);
 
-					if (PeerConnectionHelper::m_iRoleType == UserRoleType_Observer)
+				AddOrUpdateVideoCtrl(CreateLocalStreamJson(PeerConnectionHelper::m_iResourceType));
+				if (PeerConnectionHelper::m_iResourceType != 0)
+				{
+					RongRTCEngine::PublishDefaultStream((RongRTCStreamType)PeerConnectionHelper::m_iResourceType, PeerConnectionHelper::GetInstance());
+				}
+				MsgItem* pMsgItem = (MsgItem*)lParam;
+				if (pMsgItem)
+				{
+					std::string strStreamJson = pMsgItem->GetBuf(0);
+					AddOrUpdateVideoCtrl(strStreamJson);
+					if (strStreamJson.length() == 0)
 					{
-						AddMessageTipToMessageList(CreateNotificationText(L"", UPSTR(main_meeting_message_1).c_str()));
+						AddMessageTipToMessageList(CreateNotificationText(L"", UPSTR(main_wait_user_join).c_str()));
 					}
-					else
-					{
-						AddMessageTipToMessageList(CreateNotificationText(L"", UPSTR(main_meeting_message_2).c_str()));
-					}
-
-					if (PeerConnectionHelper::m_iRoleType != UserRoleType_Observer)
-					{
-						EngineErrorType errorcode = RongRTCEngine::StartLocalAudioVideo();
-						if (errorcode == EngineErrorType_CaptureNotFound)
-						{
-							m_bCameraExist = false;
-							structTipInfo* pStructTipInfo = new structTipInfo();
-							if (pStructTipInfo)
-							{
-								pStructTipInfo->m_iDoType = 23;
-								if (m_listTipInfo.size() == 0)
-								{
-									std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-									ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-								}
-								m_listTipInfo.push_back(pStructTipInfo);
-							}
-						}
-					}
-					CDuiString strText = UPSTR(main_meeting_room).c_str();
-					strText.Append(_T(" "));
-					strText.Append(m_strChannelId);
-					SetJoinChannelStatus(strText.GetData());
-
-					if (PeerConnectionHelper::m_iRoleType == UserRoleType_Host)
-					{
-						EnableOperationBtn(false, true, false, m_bCameraExist, m_bCameraExist, true);
-					}
-					else if (PeerConnectionHelper::m_iRoleType == UserRoleType_Normal)
-					{
-						EnableOperationBtn(false, true, true, m_bCameraExist, m_bCameraExist, true);
-					}
-					else if (PeerConnectionHelper::m_iRoleType == UserRoleType_Observer)
-					{
-						EnableOperationBtn(true, false, false, false, false, false, false);
-					}
-
-
-					if (m_clConnectionTimer.GetIsWork())
-					{
-						m_clConnectionTimer.Stop();
-						m_iConnectionSecond = 0;
-					}
-					m_clConnectionTimer.Start(1000, this);
-					ShowConnectionInfo(true);
-					RongRTCEngine::QueryEWBServiceUrl();
-
-					m_bFirstJionChannel = false;
+					std::string strSubscribeStreams = CreateSubscribeStreamJson();
+					RongRTCEngine::SubscribeStream(strSubscribeStreams.c_str(), PeerConnectionHelper::GetInstance());
+					SetLocalUserInfo();
+					RongRTCEngine::GetRoomAttributeValue("", GetRoomAttributeValueCallBack::GetInstance());
 				}
 			}
 			break;
-			case BDT_USER_JOIN_CHANNEL:
+			case BDT_LEAVE_ROOM_OK:
+			{
+				if (m_bQuiteApp) 
+				{
+					::PostQuitMessage(0);
+				}
+			}
+			break;
+			case BDT_GET_ROOM_ATTRIBUTE_VALUE:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					std::string strUserId, strUserName;
-					strUserId.append(pMsgItem->GetBuf(0));
-					strUserName.append(pMsgItem->GetBuf(1));
-					int iRoleType = (int)pMsgItem->GetId(0);
-					int iMediaType = (int)pMsgItem->GetId(1);
-					UserJoinChannel(strUserId, strUserName, iRoleType, iMediaType);
-					if (iRoleType != 2)
-					{
-						AddMessageTipToMessageList(CreateNotificationText(UpStringUtility::StringToWstring(strUserName), UPSTR(main_meeting_message_3).c_str()));
-					}
+					std::string strUsersInfo = pMsgItem->GetBuf(0);
+					AddOrUpdateUserInfoFromGet(strUsersInfo);
 				}
 			}
 			break;
-			case BDT_USER_LEAVE_CHANNEL:
+			case BDT_NOTIFY_SET_ROOM_ATTRIBUTE_VALUE:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					bool bIsObserver = pMsgItem->IsOK();
-					std::wstring wstrName = RemoveMemberFromMeetingList(strUserId);
-					SetVideoInvalid(strUserId);
-					ShowCallRequest(false, strUserId);
-					if (bIsObserver == false && wstrName.empty() != true)
-					{
-						AddMessageTipToMessageList(CreateNotificationText(wstrName, UPSTR(main_meeting_message_4).c_str()));
-					}
+					std::string strUsersInfo = pMsgItem->GetBuf(0);
+					AddOrUpdateUserInfoFromNotify(strUsersInfo);
 				}
 			}
 			break;
-			case BDT_USER_SCREEN_SHARED:
+			case BDT_REMOTE_USER_JOIN:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					bool bOpen = pMsgItem->IsOK();
-					std::wstring wstrName = GetUserNameFromMemberList(strUserId);
-					if (wstrName.empty() != true)
-					{
-						AddMessageTipToMessageList(CreateNotificationText(wstrName, bOpen ? UPSTR(main_meeting_message_5).c_str() : UPSTR(main_meeting_message_6).c_str()));
-					}
+					std::string strUserId = pMsgItem->GetBuf(0);
+					AddMessageTipToMessageList(CreateNotificationText(UpStringUtility::UTF8ToUnicode(strUserId), UPSTR(main_user_join).c_str()));
 				}
 			}
 			break;
-			case BDT_SEND_RECV_LOST_PERCENT_PERCENT:
+			case BDT_REMOTE_USER_LEFT:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					SetSendRecvLosPacektPercent((int)pMsgItem->GetId(0), (int)pMsgItem->GetId(1));
+					std::string strUserId = pMsgItem->GetBuf(0);
+					RemoveVideoCtrlAndUserInfo(strUserId);
+					AddMessageTipToMessageList(CreateNotificationText(UpStringUtility::UTF8ToUnicode(strUserId), UPSTR(main_user_leave).c_str()));
 				}
 			}
 			break;
-			case BDT_REMOTE_VIDEO_OK:
+			case BDT_REMOTE_STREAM_PUBLISH:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					UpdateUserInfo(strUserId, -1, -1);
+					std::string strStreamJson = pMsgItem->GetBuf(0);
+					AddOrUpdateVideoCtrl(strStreamJson);
+					RongRTCEngine::SubscribeStream(strStreamJson.c_str(), PeerConnectionHelper::GetInstance());
 				}
 			}
 			break;
-			case BDT_START_CAMERA_OK:
-			{
-				UpdateUserInfo(PeerConnectionHelper::m_strUserId, PeerConnectionHelper::m_iMediaType, PeerConnectionHelper::m_iRoleType);
-			}
-			break;
-			case BDT_STOP_CAMERA_OK:
-			{
-				//SetVideoInvalid(PeerConnectionHelper::m_strUserId);
-				//UpdateUserInfo(PeerConnectionHelper::m_strUserId, -1, 2);
-			}
-			break;
-			case BDT_OBSERVER_AGREE_HOST_REQUEST_SPEAK:
-			{
-				ObserverAgreeHostRequestSpeak();
-			}
-			break;
-			case BDT_NOTIFY_OBSERVER_AGREE_HOST_REQUEST_SPEAK:
+			case BDT_REMOTE_STREAM_UNPUBLISH:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					NotifyObserverAgreeHostRequestSpeak(strUserId);
-					std::wstring wstrName = GetUserNameFromMemberList(strUserId);
-					if (wstrName.empty() != true)
-					{
-						AddMessageTipToMessageList(CreateNotificationText(wstrName, UPSTR(main_meeting_message_3).c_str()));
-					}
+					std::string strStreamJson = pMsgItem->GetBuf(0);
+					RemoveVideoCtrl(strStreamJson);
 				}
 			}
 			break;
-			case BDT_NOTIFY_HOST_DO_OBSERVER_REQUEST_BECOME_NORMAL_USER:
+			case BDT_REMOTE_STREAM_STATE_CHANGED:
 			{
 				MsgItem* pMsgItem = (MsgItem*)lParam;
 				if (pMsgItem)
 				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					NotifyHostDoObserverRequestBecomeNormalUser(strUserId);
-				}
-			}
-			break;
-			case BDT_HOST_DO_OBSERVER_REQUEST_BECOME_NORMAL_USER:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					HostDoObserverRequestBecomeNormalUser(strUserId);
-				}
-			}
-			break;
-			case BDT_NORAML_USER_DO_HOST_REQUEST_DEGRADE_NORMAL_USER_TO_OBSERVER:
-			{
-				SetVideoInvalid(PeerConnectionHelper::m_strUserId);
-				UpdateUserInfo(PeerConnectionHelper::m_strUserId, -1, 2);
-				UpdateMicAndCameraStatus(1);
-				EnableOperationBtn(true, false, false, false, false, false, false);
-			}
-			break;
-			case BDT_NOTIFY_NORAML_USER_DO_HOST_REQUEST_DEGRADE_NORMAL_USER_TO_OBSERVER:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					SetVideoInvalid(strUserId);
-					UpdateUserInfo(strUserId, -1, 2);
-				}
-			}
-			break;
-			case BDT_NOTIFY_HOST_REQUEST_DEGRADE_NORMAL_USER_TO_OBSERVER:
-			{
-				UpdateWBUrl();
-			}
-			break;
-			case BDT_HOST_TICK_OUT:
-			case BDT_LEAVE_CAHNNEL_OK:
-			{
-				if (m_bIsExistApp == false)
-				{
-					WndHelper::BackLogonWnd(m_strChannelId);
-					Close();
-					ShowTip(false, L"");
-				}
-			}
-			break;
-			case BDT_GET_WB_URL:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem && pMsgItem->GetBuf(0).length() != 0)
-				{
-					m_bHaveExistWB = true;
-					m_strWBUrl = UpStringUtility::StringToWstring(pMsgItem->GetBuf(0)).c_str();
-					WndHelper::ShowWbWnd(m_strWBUrl);
-				}
-			}
-			break;
-			case BDT_QUERY_WB_URL:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					if (pMsgItem->GetBuf(0).length() != 0)
-					{
-						m_bHaveExistWB = true;
-						m_strWBUrl = UpStringUtility::StringToWstring(pMsgItem->GetBuf(0)).c_str();
-					}
-				}
-			}
-			break;
-			case BDT_CREATE_WB:
-			{
-				m_bHaveExistWB = true;
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					std::wstring wstrName = GetUserNameFromMemberList(strUserId);
-					if (wstrName.empty() != true)
-					{
-						AddMessageTipToMessageList(CreateNotificationText(wstrName, UPSTR(main_meeting_message_7).c_str()));
-					}
-				}
-			}
-			break;
-			case BDT_HOST_INVITE_OBSERVER_SPEAK:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strHostId;
-					strHostId.append(pMsgItem->GetBuf(0));
-					structTipInfo* pStructTipInfo = new structTipInfo();
-					if (pStructTipInfo)
-					{
-						pStructTipInfo->m_iDoType = 1;
-						pStructTipInfo->m_strResponsedUserId = strHostId;
-						if (m_listTipInfo.size() == 0)
-						{
-							std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-							ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-							m_listTipInfo.push_back(pStructTipInfo);
-						}
-						else
-						{
-							bool bHaveExist = TipInfoHaveExist(pStructTipInfo->m_iDoType);
-							if (bHaveExist)
-							{
-								delete pStructTipInfo;
-							}
-							else
-							{
-								m_listTipInfo.push_back(pStructTipInfo);
-							}
-						}
-					}
-				}
-			}
-			break;
-			case BDT_OBSERVER_REQUSET_SPEAK:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					HandleObserverRequestSpeak(pMsgItem->GetBuf(0));
-				}
-			}
-			break;
-			case BDT_HOST_REQUSET_OPEN_MEDIA:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					OnHostRequestOpenMedia(pMsgItem->GetBuf(0), (int)(pMsgItem->GetId(0)));
-				}
-			}
-			break;
-			case BDT_GET_INVITE_URL:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					bool bSuccessed = pMsgItem->IsOK();
-					structTipInfo* pStructTipInfo = new structTipInfo();
-					if (pStructTipInfo)
-					{
-						pStructTipInfo->m_iDoType = 20;
-						if (m_listTipInfo.size() == 0)
-						{
-							std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-							ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-						}
-						m_listTipInfo.push_back(pStructTipInfo);
-					}
-					CDuiString strText;
-					strText.Format(UPSTR(main_invite_tip).c_str(), m_strChannelId.GetData(), UpStringUtility::StringToWstring(pMsgItem->GetBuf(0)).c_str());
-					WndHelper::CopyTextToClipboard(strText.GetData());
-				}
-			}
-			break;
-			case BDT_REMOVE_VIDEO_RENDER:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					int iType = (int)(pMsgItem->GetId(0));
-					DeleteVideoRender(strUserId, iType);
-				}
-			}
-			break;
-			case BDT_GET_HOST_POWER_SUCCEED:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					bool bSucceed = pMsgItem->IsOK();
-					MemberGetHostPower(strUserId, bSucceed);
-					if (bSucceed)
-					{
-						if (PeerConnectionHelper::m_strUserId.compare(strUserId) != 0)
-						{
-							std::wstring wstrName = GetUserNameFromMemberList(strUserId);
-							if (wstrName.empty() != true)
-							{
-								AddMessageTipToMessageList(CreateNotificationText(wstrName, UPSTR(main_meeting_message_8).c_str()));
-							}
-						}
-						else
-						{
-							AddMessageTipToMessageList(CreateNotificationText(L"", UPSTR(main_meeting_message_9).c_str()));
-						}
-					}
-				}
-			}
-			break;
-			case BDT_HOST_BUSY:
-			{
-				structTipInfo* pStructTipInfo = new structTipInfo();
-				if (pStructTipInfo)
-				{
-					pStructTipInfo->m_iDoType = 27;
-					if (m_listTipInfo.size() == 0)
-					{
-						std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-						ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-					}
-					m_listTipInfo.push_back(pStructTipInfo);
-				}
-			}
-			break;
-			case BDT_CLOSE_SCREEN_SHARED:
-			{
-				TNotifyUI msg;
-				CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("screen_share_btn")));
-				if (pScreenShareBtn && pScreenShareBtn->GetUserData().CompareNoCase(_T("0")) == 0)
-				{
-					msg.pSender = pScreenShareBtn;
-					OnClickScreenShareBtn(msg);
-				}
-			}
-			break;
-			case BDT_USER_MEDIA_CHANGE:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strUserId;
-					strUserId.append(pMsgItem->GetBuf(0));
-					int iMediaType = (int)pMsgItem->GetId(0);
-					UpdateUserInfo(strUserId, iMediaType, -1);
-					if (PeerConnectionHelper::m_strUserId.compare(strUserId) == 0)
-					{
-						UpdateMicAndCameraStatus(iMediaType);
-					}
-				}
-			}
-			break;
-			case BDT_NOTIFY_AUDIO_LEVEL:
-			{
-				MsgItem* pMsgItem = (MsgItem*)lParam;
-				if (pMsgItem)
-				{
-					std::string strJson;
-					strJson.append(pMsgItem->GetBuf(0));
-					UpdateAudioLevel(strJson);
+					std::string strStreamJson = pMsgItem->GetBuf(0);
+					AddOrUpdateVideoCtrl(strStreamJson);
 				}
 			}
 			break;
@@ -600,8 +243,16 @@ LRESULT MainWnd::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 	if (wParam == 0)
 	{
 		bHandled = TRUE;
-		RongRTCEngine::LeaveChannel();
-		::PostQuitMessage(0);
+		int code = RongRTCEngine::LeaveRoom(LeaveRoomCallBack::GetInstance());
+		if (code != 0)
+		{
+			::PostQuitMessage(0);
+		}
+		else
+		{
+			ShowWindow(false);
+			m_bQuiteApp = true;
+		}
 	}
 	return __super::OnClose(uMsg, wParam, lParam, bHandled);
 }
@@ -619,87 +270,95 @@ LPCTSTR MainWnd::GetWindowClassName() const
 
 void MainWnd::PreCreateWindowInit(const CStdStringPtrMap & aInitData)
 {
-	m_strChannelId = *(CDuiString*)(void*)aInitData.Find(_T("strChannelId"));
-	m_strName = *(CDuiString*)(void*)aInitData.Find(_T("strName"));
 }
 
 void MainWnd::OnWinInit(TNotifyUI& msg)
 {
 	__super::OnWinInit(msg);
+	PeerConnectionHelper::m_hMainWnd = m_hWnd;
 	InitText();
-	InitCtrl();
-	std::string strChannelId = UpStringUtility::WstringToString(m_strChannelId.GetData());
-	std::string strName = UpStringUtility::WstringToString(m_strName.GetData());
-	RongRTCEngine::JoinChannel(strChannelId.c_str(), strName.c_str(), PeerConnectionHelper::m_strToken.c_str(), PeerConnectionHelper::m_iRoleType == 2 ? true : false, PeerConnectionHelper::m_iMediaType == 0 ? UserMediaType_Audio : UserMediaType_Audio_Video);
+	InitCtrl(); 
+	RongRTCEngine::SetBoolStreamParam(RongRTCStreamParamKey_SRTP, false);
+	RongRTCEngine::SetIntStreamParam(RongRTCStreamParamKey_VideoSolution, (RongRTCVideoSolution)PeerConnectionHelper::m_iResolutionType);
+	RongRTCEngine::SetBoolStreamParam(RongRTCStreamParamKey_VideoSimulcast, PeerConnectionHelper::m_bOpenTinyStream);
+	if (PeerConnectionHelper::m_bConnected == false)
+	{
+		RongRTCEngine::ConnectWithToken(PeerConnectionHelper::m_strToken.c_str());
+	}
+	else
+	{
+		RongRTCEngine::JoinRoom(PeerConnectionHelper::m_strChannelId.c_str(), RongRTCRoomType_Normal, JoinRoomCallBack::GetInstance());
+	}
 }
 
-void MainWnd::OnChangeVideoSizeBtn(TNotifyUI& msg)
+void MainWnd::OnClickShowInfoBtn(TNotifyUI& msg)
 {
-	if (m_iNowResolutionType == -1)
-	{
-		m_iNowResolutionType = PeerConnectionHelper::m_iResolutionType;
-	}
-	if (m_iNowResolutionType > 1)
-	{
-		m_iNowResolutionType--;
-	}
-	else if (m_iNowResolutionType == 1)
-	{
-		m_iNowResolutionType = PeerConnectionHelper::m_iResolutionType;
-	}
-	if (m_iNowResolutionType != -1)
-	{
-		RongRTCEngine::ChangeVideoSize(RongRTCEngine::VideoResolutionProfile(m_iNowResolutionType));
-	}
+	WndHelper::CreateStateInfoWnd();
 }
 
 void MainWnd::OnClickCloseBtn(TNotifyUI &msg)
 {
-	m_bIsExistApp = true;
-	if (m_bHaveExistWB && PeerConnectionHelper::m_iRoleType != 2 && m_lsVideoRender.size() == 1)
+	CBaseWnd* pStateInfoWnd = WndHelper::GetStateInfoWnd();
+	if (pStateInfoWnd)
 	{
-		structTipInfo* pStructTipInfo = new structTipInfo();
-		if (pStructTipInfo)
-		{
-			pStructTipInfo->m_iDoType = 21;
-			if (m_listTipInfo.size() == 0)
-			{
-				std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-				ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-			}
-			m_listTipInfo.push_back(pStructTipInfo);
-		}
+		pStateInfoWnd->Close();
+	}
+	int code = RongRTCEngine::LeaveRoom(LeaveRoomCallBack::GetInstance());
+	if (code != 0) 
+	{
+		::PostQuitMessage(0);
 	}
 	else
 	{
-		RongRTCEngine::LeaveChannel();
-		::PostQuitMessage(0);
+		ShowWindow(false);
+		m_bQuiteApp = true;
 	}
 }
 
-void MainWnd::OnClickHangeupBtn(TNotifyUI & msg)
+void MainWnd::OnClickMicBtn(TNotifyUI & msg)
 {
-	if (m_bHaveExistWB && PeerConnectionHelper::m_iRoleType != 2 && m_lsVideoRender.size() == 1)
+	CButtonUI* pMicBtn = static_cast<CButtonUI*>(msg.pSender);
+	if (pMicBtn)
 	{
-		structTipInfo* pStructTipInfo = new structTipInfo();
-		if (pStructTipInfo)
+		if (pMicBtn->GetUserData().CompareNoCase(_T("1")) == 0)
 		{
-			pStructTipInfo->m_iDoType = 21;
-			if (m_listTipInfo.size() == 0)
-			{
-				std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-				ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-			}
-			m_listTipInfo.push_back(pStructTipInfo);
+			pMicBtn->SetForeImage(strMicClose);
+			pMicBtn->SetTextColor(0xff3682f2);
+			pMicBtn->SetUserData(_T("0"));
+			m_bMuteMic = true;
+			RongRTCEngine::SetLocalDefaultAudioStreamEnabled(false, PeerConnectionHelper::GetInstance());
+			AddOrUpdateVideoCtrl(CreateLocalStreamJson(RongRTCStreamType_Audio));
+		}
+		else if (pMicBtn->GetUserData().CompareNoCase(_T("0")) == 0)
+		{
+			pMicBtn->SetForeImage(strMicOpen);
+			pMicBtn->SetTextColor(0xff000000);
+			pMicBtn->SetUserData(_T("1"));
+			m_bMuteMic = false;
+			RongRTCEngine::SetLocalDefaultAudioStreamEnabled(true, PeerConnectionHelper::GetInstance());
+			AddOrUpdateVideoCtrl(CreateLocalStreamJson(RongRTCStreamType_Audio));
 		}
 	}
-	else
+}
+
+void MainWnd::OnClickScreenShareBtn(TNotifyUI & msg)
+{
+	CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(msg.pSender);
+	if (pScreenShareBtn)
 	{
-		RongRTCEngine::LeaveChannel();
-		CBaseWnd* pWbWnd = WndHelper::GetWbWnd();
-		if (pWbWnd)
+		if (pScreenShareBtn->GetUserData().CompareNoCase(_T("1")) == 0)
 		{
-			pWbWnd->Close();
+			pScreenShareBtn->SetForeImage(strShareHot);
+			pScreenShareBtn->SetTextColor(0xff3682f2);
+			pScreenShareBtn->SetUserData(_T("0"));
+			RongRTCEngine::PublishScreenShareStream(PeerConnectionHelper::GetInstance());
+		}
+		else if (pScreenShareBtn->GetUserData().CompareNoCase(_T("0")) == 0)
+		{
+			pScreenShareBtn->SetForeImage(strShareNormal);
+			pScreenShareBtn->SetTextColor(0xff000000);
+			pScreenShareBtn->SetUserData(_T("1"));
+			RongRTCEngine::UnPublishScreenShareStream(PeerConnectionHelper::GetInstance());
 		}
 	}
 }
@@ -711,146 +370,33 @@ void MainWnd::OnClickCameraBtn(TNotifyUI & msg)
 	{
 		if (pCameraBtn->GetUserData().CompareNoCase(_T("1")) == 0)
 		{
-			CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("screen_share_btn")));
-			if (pScreenShareBtn && pScreenShareBtn->GetUserData().CompareNoCase(_T("0")) == 0)
-			{
-				structTipInfo* pStructTipInfo = new structTipInfo();
-				if (pStructTipInfo)
-				{
-					pStructTipInfo->m_iDoType = 25;
-					if (m_listTipInfo.size() == 0)
-					{
-						std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-						ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-					}
-					m_listTipInfo.push_back(pStructTipInfo);
-				}
-			}
-			else
-			{
-				if (RongRTCEngine::SetVideoEnabled(false) == EngineErrorType_Success)
-				{
-					pCameraBtn->SetForeImage(strCameraClose);
-					pCameraBtn->SetTextColor(0xff3682f2);
-					pCameraBtn->SetUserData(_T("0"));
-
-					VideoRender* pVideoRender = GetVideoRender(PeerConnectionHelper::m_strUserId);
-					PeerConnectionHelper::UpdateMediaType(1, 0); //视频关闭
-					pVideoRender->SetMediaType(PeerConnectionHelper::m_iMediaType);
-
-					if (pVideoRender && pVideoRender->GetVideoUI())
-					{
-						if (pVideoRender->GetVideoUI()->GetName().Compare(_T("local_video")) == 0)
-						{
-							CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoRender->GetVideoUI(), _T("local_name_portrait")));
-							if (pPortrait)
-							{
-								RECT rc = { 0 };
-								rc = pPortrait->GetPos();
-								if (rc.bottom == rc.top)
-								{
-									rc.bottom = rc.top + 80;
-								}
-								pPortrait->SetPos(rc);
-								pPortrait->SetBkColor(pVideoRender->GetRgb());
-								pPortrait->SetText(pVideoRender->GetShortName().c_str());
-							}
-						}
-						else
-						{
-							CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoRender->GetVideoUI(), _T("name_portrait")));
-							if (pPortrait)
-							{
-								pPortrait->SetVisible(true);
-								pPortrait->SetBkColor(pVideoRender->GetRgb());
-								pPortrait->SetText(pVideoRender->GetShortName().c_str());
-							}
-						}
-						pVideoRender->SetOutputFrame(false);
-						pVideoRender->SetBitmap(NULL, NULL);
-					}
-				}
-			}
+			pCameraBtn->SetForeImage(strCameraClose);
+			pCameraBtn->SetTextColor(0xff3682f2);
+			pCameraBtn->SetUserData(_T("0"));
+			m_bMuteCamera = true;
+			RongRTCEngine::SetLocalDefaultVideoStreamEnabled(false, PeerConnectionHelper::GetInstance());
+			AddOrUpdateVideoCtrl(CreateLocalStreamJson(RongRTCStreamType_Video));
 		}
 		else if (pCameraBtn->GetUserData().CompareNoCase(_T("0")) == 0)
 		{
-			if (RongRTCEngine::SetVideoEnabled(true) == EngineErrorType_Success)
-			{
-				VideoRender* pVideoRender = GetVideoRender(PeerConnectionHelper::m_strUserId);
-				PeerConnectionHelper::UpdateMediaType(1, 1); //打开视频
-				pVideoRender->SetMediaType(PeerConnectionHelper::m_iMediaType);
-				
-
-				pCameraBtn->SetForeImage(strCameraOpen);
-				pCameraBtn->SetTextColor(0xff000000);
-				pCameraBtn->SetUserData(_T("1"));
-				if (pVideoRender && pVideoRender->GetVideoUI())
-				{
-					pVideoRender->SetOutputFrame(true);
-					if (pVideoRender->GetVideoUI()->GetName().Compare(_T("local_video")) == 0)
-					{
-						CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoRender->GetVideoUI(), _T("local_name_portrait")));
-						if (pPortrait)
-						{
-							RECT rc = { 0 };
-							rc = pPortrait->GetPos();
-							if (rc.bottom != rc.top)
-							{
-								rc.bottom = rc.top;
-							}
-							pPortrait->SetPos(rc);
-						}
-					}
-					else
-					{
-						CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoRender->GetVideoUI(), _T("name_portrait")));
-						if (pPortrait)
-						{
-							pPortrait->SetVisible(false);
-						}
-					}
-				}
-			}
+			pCameraBtn->SetForeImage(strCameraOpen);
+			pCameraBtn->SetTextColor(0xff000000);
+			pCameraBtn->SetUserData(_T("1"));
+			m_bMuteCamera = false;
+			RongRTCEngine::SetLocalDefaultVideoStreamEnabled(true, PeerConnectionHelper::GetInstance());
+			AddOrUpdateVideoCtrl(CreateLocalStreamJson(RongRTCStreamType_Video));
 		}
 	}
 }
 
-void MainWnd::OnClickMicBtn(TNotifyUI & msg)
-{
-	CButtonUI* pMicBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pMicBtn)
-	{
-		if (pMicBtn->GetUserData().CompareNoCase(_T("1")) == 0)
-		{
-			if (RongRTCEngine::SetAudioEnabled(false) == EngineErrorType_Success)
-			{
-				PeerConnectionHelper::UpdateMediaType(2, 0); //音频关闭
-				pMicBtn->SetForeImage(strMicClose);
-				pMicBtn->SetTextColor(0xff3682f2);
-				pMicBtn->SetUserData(_T("0"));
-			}
-		}
-		else if (pMicBtn->GetUserData().CompareNoCase(_T("0")) == 0)
-		{
-			if (RongRTCEngine::SetAudioEnabled(true) == EngineErrorType_Success)
-			{
-				PeerConnectionHelper::UpdateMediaType(2, 1); //音频打开
-				pMicBtn->SetForeImage(strMicOpen);
-				pMicBtn->SetTextColor(0xff000000);
-				pMicBtn->SetUserData(_T("1"));
-			}
-		}
-	}
-}
-
-void MainWnd::OnClickLoudSpeakerBtn(TNotifyUI & msg)
+void MainWnd::OnClickSpeakerBtn(TNotifyUI & msg)
 {
 	CButtonUI* pLoudSpeakerBtn = static_cast<CButtonUI*>(msg.pSender);
 	if (pLoudSpeakerBtn)
 	{
 		if (pLoudSpeakerBtn->GetUserData().CompareNoCase(_T("1")) == 0)
 		{
-			if (RongRTCEngine::SetSpeakerEnabled(false) == EngineErrorType_Success)
+			if (RongRTCEngine::SetSpeakerEnabled(false, PeerConnectionHelper::GetInstance()) == RongRTCCodeOK)
 			{
 				pLoudSpeakerBtn->SetForeImage(strLoundSpeakerClose);
 				pLoudSpeakerBtn->SetTextColor(0xff3682f2);
@@ -859,7 +405,7 @@ void MainWnd::OnClickLoudSpeakerBtn(TNotifyUI & msg)
 		}
 		else if (pLoudSpeakerBtn->GetUserData().CompareNoCase(_T("0")) == 0)
 		{
-			if (RongRTCEngine::SetSpeakerEnabled(true) == EngineErrorType_Success)
+			if (RongRTCEngine::SetSpeakerEnabled(true, PeerConnectionHelper::GetInstance()) == RongRTCCodeOK)
 			{
 				pLoudSpeakerBtn->SetForeImage(strLoundSpeakerOpen);
 				pLoudSpeakerBtn->SetTextColor(0xff000000);
@@ -869,452 +415,100 @@ void MainWnd::OnClickLoudSpeakerBtn(TNotifyUI & msg)
 	}
 }
 
-void MainWnd::OnClickWBBtn(TNotifyUI & msg)
+void MainWnd::OnClickHangeupBtn(TNotifyUI & msg)
 {
-	CButtonUI* pBWBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pBWBtn)
+	CBaseWnd* pStateInfoWnd = WndHelper::GetStateInfoWnd();
+	if (pStateInfoWnd)
 	{
-		if (m_strWBUrl.GetLength() == 0)
+		pStateInfoWnd->Close();
+	}
+	RongRTCEngine::LeaveRoom(LeaveRoomCallBack::GetInstance());
+	WndHelper::BackLogonWnd();
+	Close();
+}
+
+void MainWnd::OnTabOptionChanged(TNotifyUI & msg)
+{
+	CTabLayoutUI* pTabListLayout = static_cast<CTabLayoutUI*>(m_PaintManager.FindControl(_T("tab_list_layout")));
+	if (pTabListLayout)
+	{
+		if (msg.pSender->GetUserData().Compare(L"0") == 0)
 		{
-			if (PeerConnectionHelper::m_iRoleType != 2)
-			{
-				RongRTCEngine::GetEWBServiceUrl();
-			}
-			else
-			{
-				structTipInfo* pStructTipInfo = new structTipInfo();
-				if (pStructTipInfo)
-				{
-					pStructTipInfo->m_iDoType = 22;
-					if (m_listTipInfo.size() == 0)
-					{
-						std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-						ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-					}
-					m_listTipInfo.push_back(pStructTipInfo);
-				}
-			}
+			pTabListLayout->SelectItem(0);
 		}
 		else
 		{
-			WndHelper::ShowWbWnd(m_strWBUrl);
+			pTabListLayout->SelectItem(1);
 		}
 	}
 }
 
-void MainWnd::OnClickInviteBtn(TNotifyUI & msg)
+void MainWnd::OnExchangeBtn(TNotifyUI & msg)
 {
-	RongRTCEngine::GetInviteUrl();
-}
+	CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(msg.pSender);
+	CVideoUI* pRemoteVideoCtrl = static_cast<CVideoUI*>(pExchangeBtn->GetParent());
+	CLabelUI* pLocalNoVideoFlag = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(m_pLocalVideoCtrl, _T("local_no_video")));
+	CDuiString strRemoteStreamId = pRemoteVideoCtrl->GetUserData();
+	CDuiString strLocalStreamId = m_pLocalVideoCtrl->GetUserData();
+	StreamInfo* pRemoteStreamInfo = (StreamInfo*)pRemoteVideoCtrl->GetTag();
+	StreamInfo* pLocalStreamInfo = (StreamInfo*)m_pLocalVideoCtrl->GetTag();
+	BITMAPINFO* pLocalInfo = NULL, *pRemoteInfo = NULL;
+	unsigned char* pLocalBuffer = NULL, *pRemoteBuffer = NULL;
+	m_pLocalVideoCtrl->GetBitmap(&pLocalInfo, &pLocalBuffer);
+	pRemoteVideoCtrl->GetBitmap(&pRemoteInfo, &pRemoteBuffer);
+	pRemoteVideoCtrl->SetUserData(strLocalStreamId);
+	pRemoteVideoCtrl->SetTag((UINT_PTR)pLocalStreamInfo);
+	if (((pLocalStreamInfo->m_iMediaType & 2) == 2 && pLocalStreamInfo->m_iState[1] == 0)
+		|| (pLocalStreamInfo->m_iMediaType & 2) != 2) {
+		pExchangeBtn->SetBkImage(strSmallOnlyAudioBg);
+		pRemoteVideoCtrl->SetBitmap(NULL, NULL);
+	} else {
+		pExchangeBtn->SetBkImage(_T(""));
+		pRemoteVideoCtrl->SetBitmap(pLocalInfo, pLocalBuffer);
+	}
+	m_pLocalVideoCtrl->SetUserData(strRemoteStreamId);
+	m_pLocalVideoCtrl->SetTag((UINT_PTR)pRemoteStreamInfo);
+	RECT rc = pLocalNoVideoFlag->GetPos();
+	if (((pRemoteStreamInfo->m_iMediaType & 2) == 2 && pRemoteStreamInfo->m_iState[1] == 0)
+		|| (pRemoteStreamInfo->m_iMediaType & 2) != 2) {
+		rc.bottom = rc.top + 80;
+		m_pLocalVideoCtrl->SetBitmap(NULL, NULL);
+	} else {
+		rc.bottom = rc.top;
+		m_pLocalVideoCtrl->SetBitmap(pRemoteInfo, pRemoteBuffer);
+	}
+	pLocalNoVideoFlag->SetPos(rc);
 
-void MainWnd::OnClickScreenShareBtn(TNotifyUI & msg)
-{
-	CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pScreenShareBtn)
+	Json::Value uris;
+	if (pLocalStreamInfo->m_strUserId.compare(PeerConnectionHelper::m_strUserId) != 0)
 	{
-		if (pScreenShareBtn->GetUserData().CompareNoCase(_T("1")) == 0)
+		if ((pLocalStreamInfo->m_iMediaType & 2) == 2)
 		{
-			CButtonUI* pCameraBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("camera_btn")));
-			if (pCameraBtn && pCameraBtn->GetUserData().CompareNoCase(_T("0")) == 0)
-			{
-				structTipInfo* pStructTipInfo = new structTipInfo();
-				if (pStructTipInfo)
-				{
-					pStructTipInfo->m_iDoType = 24;
-					if (m_listTipInfo.size() == 0)
-					{
-						std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-						ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-					}
-					m_listTipInfo.push_back(pStructTipInfo);
-				}
-			}
-			else
-			{
-				DEVMODE dm;
-				ZeroMemory(&dm, sizeof(dm));
-				dm.dmSize = sizeof(dm);
-				dm.dmDriverExtra = 0;
-				EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
-
-				int iScreenWidth = dm.dmPelsWidth;
-				int iScreenHeight = dm.dmPelsHeight;
-
-				EngineErrorType error = RongRTCEngine::StartOrStopScreenShare(true, 0, 0, iScreenWidth, iScreenHeight);
-				if (error == EngineErrorType_Success)
-				{
-					pScreenShareBtn->SetForeImage(strShareHot);
-					pScreenShareBtn->SetTextColor(0xff3682f2);
-					pScreenShareBtn->SetUserData(_T("0"));
-					VideoRender* pVideoRender = GetVideoRender(PeerConnectionHelper::m_strUserId);
-					if (pVideoRender)
-					{
-						pVideoRender->SetOutputFrame(false);
-						pVideoRender->SetBitmap(NULL, NULL);
-						CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(pVideoRender->GetVideoUI());
-						if (pVideoCtrl)
-						{
-							if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-							{
-								CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_video_tip")));
-								if (pLocalVideoTip)
-								{
-									RECT rc = pLocalVideoTip->GetPos();
-									rc.bottom = rc.top + 20;
-									pLocalVideoTip->SetPos(rc);
-								}
-							}
-							else
-							{
-								CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("exchange_video_btn")));
-								if (pExchangeBtn)
-								{
-									pExchangeBtn->SetText(UPSTR(main_screen_share_tip).c_str());
-								}
-							}
-						}
-					}
-				}
-				else if (error == EngineErrorType_CaptureNotFound)
-				{
-					pScreenShareBtn->SetForeImage(strShareHot);
-					pScreenShareBtn->SetTextColor(0xff3682f2);
-					pScreenShareBtn->SetUserData(_T("0"));
-					VideoRender* pVideoRender = GetVideoRender(PeerConnectionHelper::m_strUserId);
-					if (pVideoRender)
-					{
-						pVideoRender->SetOutputFrame(false);
-						pVideoRender->SetBitmap(NULL, NULL);
-					}
-
-					structTipInfo* pStructTipInfo = new structTipInfo();
-					if (pStructTipInfo)
-					{
-						pStructTipInfo->m_iDoType = 23;
-						if (m_listTipInfo.size() == 0)
-						{
-							std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-							ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-						}
-						m_listTipInfo.push_back(pStructTipInfo);
-					}
-				}
-			}
-		}
-		else if (pScreenShareBtn->GetUserData().CompareNoCase(_T("0")) == 0)
-		{
-			EngineErrorType error = RongRTCEngine::StartOrStopScreenShare(false);
-			if (error == EngineErrorType_Success)
-			{
-				pScreenShareBtn->SetForeImage(strShareNormal);
-				pScreenShareBtn->SetTextColor(0xff000000);
-				pScreenShareBtn->SetUserData(_T("1"));
-				VideoRender* pVideoRender = GetVideoRender(PeerConnectionHelper::m_strUserId);
-				if (pVideoRender)
-				{
-					pVideoRender->SetOutputFrame(true);
-					pVideoRender->SetBitmap(NULL, NULL);
-
-					CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(pVideoRender->GetVideoUI());
-					if (pVideoCtrl)
-					{
-						if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-						{
-							CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_video_tip")));
-							if (pLocalVideoTip)
-							{
-								RECT rc = pLocalVideoTip->GetPos();
-								rc.bottom = rc.top;
-								pLocalVideoTip->SetPos(rc);
-							}
-						}
-						else
-						{
-							CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("exchange_video_btn")));
-							if (pExchangeBtn)
-							{
-								pExchangeBtn->SetText(_T(""));
-							}
-						}
-					}
-				}
-			}
-			else if (error == EngineErrorType_CaptureNotFound)
-			{
-				pScreenShareBtn->SetForeImage(strShareNormal);
-				pScreenShareBtn->SetTextColor(0xff000000);
-				pScreenShareBtn->SetUserData(_T("1"));
-				VideoRender* pVideoRender = GetVideoRender(PeerConnectionHelper::m_strUserId);
-				if (pVideoRender)
-				{
-					pVideoRender->SetOutputFrame(true);
-					pVideoRender->SetBitmap(NULL, NULL);
-
-					CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(pVideoRender->GetVideoUI());
-					if (pVideoCtrl)
-					{
-						if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-						{
-							CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_video_tip")));
-							if (pLocalVideoTip)
-							{
-								RECT rc = pLocalVideoTip->GetPos();
-								rc.bottom = rc.top;
-								pLocalVideoTip->SetPos(rc);
-							}
-						}
-						else
-						{
-							CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("exchange_video_btn")));
-							if (pExchangeBtn)
-							{
-								pExchangeBtn->SetText(_T(""));
-							}
-						}
-					}
-				}
-
-				structTipInfo* pStructTipInfo = new structTipInfo();
-				if (pStructTipInfo)
-				{
-					pStructTipInfo->m_iDoType = 23;
-					if (m_listTipInfo.size() == 0)
-					{
-						std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-						ShowTip(true, strTipInfo, L"", UPSTR(main_messagebox_know).c_str());
-					}
-					m_listTipInfo.push_back(pStructTipInfo);
-				}
-			}
+			Json::Value uri_array;
+			Json::Value uri;
+			uri["tag"] = pLocalStreamInfo->m_strTag;
+			uri["mediaType"] = 1;
+			uri["simulcast"] = 2;
+			uri_array[pLocalStreamInfo->m_strUserId].append(uri);
+			uris.append(uri_array);
 		}
 	}
-}
-
-void MainWnd::OnGetHostPower(TNotifyUI & msg)
-{
-	if (PeerConnectionHelper::m_iRoleType != 3)
+	if (pRemoteStreamInfo->m_strUserId.compare(PeerConnectionHelper::m_strUserId) != 0)
 	{
-		structTipInfo* pStructTipInfo = new structTipInfo();
-		if (pStructTipInfo)
+		if ((pRemoteStreamInfo->m_iMediaType & 2) == 2)
 		{
-			pStructTipInfo->m_iDoType = 12;
-			if (m_listTipInfo.size() == 0)
-			{
-				std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-				ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-			}
-			m_listTipInfo.push_back(pStructTipInfo);
+			Json::Value uri_array;
+			Json::Value uri;
+			uri["tag"] = pRemoteStreamInfo->m_strTag;
+			uri["mediaType"] = 1;
+			uri["simulcast"] = 1;
+			uri_array[pRemoteStreamInfo->m_strUserId].append(uri);
+			uris.append(uri_array);
 		}
 	}
-}
-
-void MainWnd::OnExchangeVideoBtn(TNotifyUI & msg)
-{
-	CButtonUI* pExchangeVideoBtn = static_cast<CButtonUI*>(msg.pSender);
-	CVideoUI* pRemoteVideoCtrl = static_cast<CVideoUI*>(pExchangeVideoBtn->GetParent());
-	CVideoUI* pLocalVideoCtrl = static_cast<CVideoUI*>(m_PaintManager.FindControl(_T("local_video")));
-	if (pRemoteVideoCtrl && pLocalVideoCtrl)
+	if (uris.size() != 0)
 	{
-		VideoRender* pVideoRender_1 = (VideoRender*)pLocalVideoCtrl->GetTag();
-		VideoRender* pVideoRender_2 = (VideoRender*)pRemoteVideoCtrl->GetTag();
-		if (pVideoRender_1 && pVideoRender_2)
-		{
-			std::string strSubscribeStreamJson = "[";
-			if (pVideoRender_1->GetStreamId().compare(PeerConnectionHelper::m_strUserId) != 0)
-			{
-				strSubscribeStreamJson.append("{\"user_id\":\"");
-				strSubscribeStreamJson.append(pVideoRender_1->GetStreamId());
-				strSubscribeStreamJson.append("\",\"stream_type\":2}");
-			}
-			if (pVideoRender_2->GetStreamId().compare(PeerConnectionHelper::m_strUserId) != 0)
-			{
-				if (strSubscribeStreamJson.compare("[") != 0)
-				{
-					strSubscribeStreamJson.append(",");
-				}
-				strSubscribeStreamJson.append("{\"user_id\":\"");
-				strSubscribeStreamJson.append(pVideoRender_2->GetStreamId());
-				strSubscribeStreamJson.append("\",\"stream_type\":1}");
-			}
-			strSubscribeStreamJson.append("]");
-			RongRTCEngine::SubscribeStream(strSubscribeStreamJson.c_str());
-
-			CGifAnimUI* pLocalSpeakingFlag = static_cast<CGifAnimUI*>(m_PaintManager.FindSubControlByName(pLocalVideoCtrl, _T("local_speaking_flag")));
-			if (pLocalSpeakingFlag)
-			{
-				RECT rc = { 0 };
-				rc = pLocalSpeakingFlag->GetPos();
-				if (rc.top != rc.bottom)
-				{
-					rc.top = rc.bottom;
-					pLocalSpeakingFlag->SetPos(rc);
-				}
-			}
-			CGifAnimUI* pRemoteSpeakingFlag = static_cast<CGifAnimUI*>(m_PaintManager.FindSubControlByName(pLocalVideoCtrl, _T("speaking_flag")));
-			if (pRemoteSpeakingFlag)
-			{
-				RECT rc = { 0 };
-				rc = pRemoteSpeakingFlag->GetPos();
-				if (rc.top != rc.bottom)
-				{
-					rc.top = rc.bottom;
-					pRemoteSpeakingFlag->SetPos(rc);
-				}
-			}
-
-			pRemoteVideoCtrl->SetTag(UINT_PTR(pVideoRender_1));
-			pLocalVideoCtrl->SetTag(UINT_PTR(pVideoRender_2));
-
-			BITMAPINFO* pInfo_1 = NULL; BITMAPINFO* pInfo_2 = NULL;
-			unsigned char* buffer_1 = NULL; unsigned char* buffer_2 = NULL;
-			bool bIsHaveVideo_1 = false; bool bIsHaveVideo_2 = false;
-			bool bIsLoading_1 = false; bool bIsLoading_2 = false;
-			bool bIsScreenShared_1 = false; bool bIsScreenShared_2 = false;
-			
-			CLabelUI* pLocalPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pLocalVideoCtrl, _T("local_name_portrait")));
-			CLabelUI* pRemotePortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pRemoteVideoCtrl, _T("name_portrait")));
-			if (pLocalPortrait && pRemotePortrait)
-			{
-				RECT rcLocal = { 0 };
-				rcLocal = pLocalPortrait->GetPos();
-				if (rcLocal.bottom != rcLocal.top)
-				{
-					bIsHaveVideo_1 = true;
-					if (_tcslen(pLocalPortrait->GetBkImage()) != 0)
-					{
-						bIsLoading_1 = true;
-					}
-				}
-
-				if (pRemotePortrait->IsVisible())
-				{
-					bIsHaveVideo_2 = true;
-
-					if (_tcslen(pRemotePortrait->GetBkImage()) != 0)
-					{
-						bIsLoading_2 = true;
-					}
-				}
-
-				if (bIsHaveVideo_1)
-				{
-					if (pRemotePortrait->IsVisible() == false)
-					{
-						pRemotePortrait->SetVisible(true);
-					}
-					pRemotePortrait->SetBkColor(pVideoRender_1->GetRgb());
-					pRemotePortrait->SetText(pVideoRender_1->GetShortName().c_str());
-					if (bIsLoading_1)
-					{
-						pRemotePortrait->SetBkImage(_T("file='main\\loading_42.png' source='0,0,42,42' dest='19,19,61,61' step='35'"));
-						pRemotePortrait->OnActionLoop2(NULL);
-					}
-					else
-					{
-						pRemotePortrait->StopAction(_T("loop2"));
-						pRemotePortrait->SetBkImage(_T(""));
-					}
-				}
-				else
-				{
-					if (pRemotePortrait->IsVisible())
-					{
-						pRemotePortrait->SetVisible(false);
-					}
-					if (bIsLoading_1 == false)
-					{
-						pRemotePortrait->StopAction(_T("loop2"));
-						pRemotePortrait->SetBkImage(_T(""));
-					}
-				}
-
-				if (bIsHaveVideo_2)
-				{
-					if (rcLocal.bottom == rcLocal.top)
-					{
-						rcLocal.bottom = rcLocal.top + 80;
-					}
-					pLocalPortrait->SetPos(rcLocal);
-					pLocalPortrait->SetBkColor(pVideoRender_2->GetRgb());
-					pLocalPortrait->SetText(pVideoRender_2->GetShortName().c_str());
-					if (bIsLoading_2)
-					{
-						pLocalPortrait->SetBkImage(_T("file='main\\loading_42.png' source='0,0,42,42' dest='19,19,61,61' step='35'"));
-						pLocalPortrait->OnActionLoop2(NULL);
-					}
-					else
-					{
-						pLocalPortrait->StopAction(_T("loop2"));
-						pLocalPortrait->SetBkImage(_T(""));
-					}
-				}
-				else
-				{
-					if (rcLocal.bottom != rcLocal.top)
-					{
-						rcLocal.bottom = rcLocal.top;
-					}
-					pLocalPortrait->SetPos(rcLocal);
-					if (bIsLoading_2 == false)
-					{
-						pLocalPortrait->StopAction(_T("loop2"));
-						pLocalPortrait->SetBkImage(_T(""));
-					}
-				}
-			}
-			
-			CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pLocalVideoCtrl, _T("local_video_tip")));
-			CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pRemoteVideoCtrl, _T("exchange_video_btn")));
-			if (pLocalVideoTip && pExchangeBtn)
-			{
-				RECT rc = pLocalVideoTip->GetPos();
-				if (rc.top != rc.bottom)
-				{
-					bIsScreenShared_1 = true;
-				}
-				if (pExchangeBtn->GetText().GetLength() != 0)
-				{
-					bIsScreenShared_2 = true;
-				}
-				if (bIsScreenShared_2)
-				{
-					if (rc.top == rc.bottom)
-					{
-						rc.bottom = rc.top + 20;
-					}
-					pLocalVideoTip->SetPos(rc);
-				}
-				else
-				{
-					if (rc.top != rc.bottom)
-					{
-						rc.bottom = rc.top;
-					}
-					pLocalVideoTip->SetPos(rc);
-				}
-				if (bIsScreenShared_1)
-				{
-					pExchangeBtn->SetText(UPSTR(main_screen_share_tip).c_str());
-				}
-				else
-				{
-					pExchangeBtn->SetText(_T(""));
-				}
-			}
-
-			if (bIsHaveVideo_1 || !bIsScreenShared_1)
-			{
-				pVideoRender_1->GetBitmap(pInfo_1, buffer_1);
-			}
-			if (bIsHaveVideo_2 || !bIsScreenShared_2)
-			{
-				pVideoRender_2->GetBitmap(pInfo_2, buffer_2);
-			}
-			pVideoRender_1->SetBitmap(pInfo_2, buffer_2);
-			pVideoRender_2->SetBitmap(pInfo_1, buffer_1);
-
-			pVideoRender_1->ExchangeVideo(pVideoRender_2);
-		}
+		RongRTCEngine::SubscribeStream(uris.toStyledString().c_str(), PeerConnectionHelper::GetInstance());
 	}
 }
 
@@ -1341,651 +535,132 @@ void MainWnd::OnClickUpAndDownBtn(TNotifyUI & msg)
 	}
 }
 
-void MainWnd::OnTabOptionChanged(TNotifyUI & msg)
+void MainWnd::AddOrUpdateVideoCtrl(std::string strStreams)
 {
-	CTabLayoutUI* pTabListLayout = static_cast<CTabLayoutUI*>(m_PaintManager.FindControl(_T("tab_list_layout")));
-	if (pTabListLayout)
+	Json::Value root;
+	Json::Reader reader;
+	if (reader.parse(strStreams, root))
 	{
-		if (msg.pSender->GetUserData().Compare(L"0") == 0)
+		for (unsigned i = 0; i < root.size(); i++)
 		{
-			pTabListLayout->SelectItem(0);
-		}
-		else
-		{
-			pTabListLayout->SelectItem(1);
-		}
-	}
-}
-
-void MainWnd::OnEnterMemberListItem(TNotifyUI & msg)
-{
-	CListContainerElementUI* pListItem = static_cast<CListContainerElementUI*>(msg.pSender->GetParent());
-	if (pListItem)
-	{
-		CDuiString strStreamId = pListItem->GetUserData();
-		if (strStreamId.Compare(UpStringUtility::StringToWchar(PeerConnectionHelper::m_strUserId)) == 0)
-		{
-			return;
-		}
-	}
-	if (PeerConnectionHelper::m_iRoleType == 3)
-	{
-		ShowDoBtnOnMeetingList((CListContainerElementUI*)(msg.pSender->GetParent()), true);
-	}
-}
-
-void MainWnd::OnLeaveMemberListItem(TNotifyUI & msg)
-{
-	ShowDoBtnOnMeetingList(((CListContainerElementUI*)msg.pSender->GetParent()), false);
-}
-
-void MainWnd::OnClickAudioBtnOnMemberList(TNotifyUI & msg)
-{
-	CButtonUI* pAudioBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pAudioBtn)
-	{
-		CDuiString strUserId = pAudioBtn->GetParent()->GetParent()->GetParent()->GetUserData();
-
-		if (pAudioBtn->GetUserData().CompareNoCase(_T("1")) == 0)
-		{
-			structTipInfo* pStructTipInfo = new structTipInfo();
-			if (pStructTipInfo)
+			Json::Value uris_object = root[i];
+			Json::Value::Members members = uris_object.getMemberNames();
+			if (members.size() == 0)
 			{
-				pStructTipInfo->m_iDoType = 15;
-				pStructTipInfo->m_strResponsedUserId = UpStringUtility::WcharToChar(strUserId);
-				pStructTipInfo->m_iHostControlMediaType = ControlMediaType_Audio;
-				if (m_listTipInfo.size() == 0)
-				{
-					std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-					ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-				}
-				m_listTipInfo.push_back(pStructTipInfo);
+				continue;
 			}
-		}
-		else
-		{
-			RongRTCEngine::HostRequestControlUserDevice(UpStringUtility::WcharToChar(strUserId), ControlAction_Open, ControlMediaType_Audio);
-		}
-	}
-}
-
-void MainWnd::OnClickVideoBtnOnMemberList(TNotifyUI & msg)
-{
-	CButtonUI* pVideoBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pVideoBtn)
-	{
-		CDuiString strUserId = pVideoBtn->GetParent()->GetParent()->GetParent()->GetUserData();
-		//1是打开状态 0是关闭状态
-
-		if (pVideoBtn->GetUserData().CompareNoCase(_T("1")) == 0)
-		{
-			structTipInfo* pStructTipInfo = new structTipInfo();
-			if (pStructTipInfo)
-			{
-				pStructTipInfo->m_iDoType = 16;
-				pStructTipInfo->m_strResponsedUserId = UpStringUtility::WcharToChar(strUserId);
-				pStructTipInfo->m_iHostControlMediaType = ControlMediaType_Video;
-				if (m_listTipInfo.size() == 0)
+			std::string user_id = members.front();
+			Json::Value uris = uris_object[user_id];
+			for (unsigned i = 0; i < uris.size(); ++i) {
+				StreamInfo* pStreamInfo = NULL;
+				std::string msid = uris[i]["msid"].asString();
+				int media_type = uris[i]["mediaType"].asInt();
+				for (std::list<StreamInfo*>::iterator it = m_listStreamsInfo.begin(); it != m_listStreamsInfo.end(); ++it)
 				{
-					std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-					ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-				}
-				m_listTipInfo.push_back(pStructTipInfo);
-			}
-		}
-		else
-		{
-			RongRTCEngine::HostRequestControlUserDevice(UpStringUtility::WcharToChar(strUserId), ControlAction_Open, ControlMediaType_Video);
-		}
-	}
-}
-
-void MainWnd::OnClickUpDownLevelBtnOnMemberList(TNotifyUI & msg)
-{
-	CButtonUI* pUpDownLevelBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pUpDownLevelBtn)
-	{
-		CDuiString strUserId = pUpDownLevelBtn->GetParent()->GetParent()->GetParent()->GetUserData();
-		if (pUpDownLevelBtn->GetUserData().Compare(_T("0")) == 0)
-		{
-			RongRTCEngine::HostRequestUpgradeObserverToNormalUser(UpStringUtility::WcharToChar(strUserId));
-		}
-		else
-		{
-			structTipInfo* pStructTipInfo = new structTipInfo();
-			if (pStructTipInfo)
-			{
-				pStructTipInfo->m_iDoType = 18;
-				pStructTipInfo->m_strResponsedUserId = UpStringUtility::WcharToChar(strUserId);
-				pStructTipInfo->m_iHostControlMediaType = ControlMediaType_Video;
-				if (m_listTipInfo.size() == 0)
-				{
-					std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-					ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-				}
-				m_listTipInfo.push_back(pStructTipInfo);
-			}
-		}
-	}
-}
-
-void MainWnd::OnClickDeleteMemberBtnOnMemberList(TNotifyUI & msg)
-{
-	CButtonUI* pDeleteMemberBtn = static_cast<CButtonUI*>(msg.pSender);
-	if (pDeleteMemberBtn)
-	{
-		CDuiString strUserId = pDeleteMemberBtn->GetParent()->GetParent()->GetParent()->GetUserData();
-		structTipInfo* pStructTipInfo = new structTipInfo();
-		if (pStructTipInfo)
-		{
-			pStructTipInfo->m_iDoType = 19;
-			pStructTipInfo->m_strResponsedUserId = UpStringUtility::WcharToChar(strUserId);
-			pStructTipInfo->m_iHostControlMediaType = ControlMediaType_Video;
-			if (m_listTipInfo.size() == 0)
-			{
-				std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-				ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-			}
-			m_listTipInfo.push_back(pStructTipInfo);
-		}
-	}
-}
-
-void MainWnd::OnClickAgreeCall(TNotifyUI & msg)
-{
-	std::string strUserId;
-	strUserId.append(UpStringUtility::WcharToChar(msg.pSender->GetParent()->GetUserData()));
-	if (strUserId.length() > 0)
-	{
-		RongRTCEngine::HostDoObserverRequestBecomeNormalUser(strUserId.c_str(), OperationType_Accept);
-	}
-	ShowCallRequest(false, "");
-}
-
-void MainWnd::OnClickRefuseCall(TNotifyUI & msg)
-{
-	std::string strUserId;
-	strUserId.append(UpStringUtility::WcharToChar(msg.pSender->GetParent()->GetUserData()));
-	if (strUserId.length() > 0)
-	{
-		RongRTCEngine::HostDoObserverRequestBecomeNormalUser(strUserId.c_str(), OperationType_Refuse);
-	}
-	ShowCallRequest(false, "");
-}
-
-void MainWnd::OnClickRequestSpeak(TNotifyUI & msg)
-{
-	if (PeerConnectionHelper::m_iRoleType == 2)
-	{
-		RongRTCEngine::ObserverRequestBecomeNormalUser();
-	}
-}
-
-void MainWnd::OnClickFullScreenOrRestore(TNotifyUI & msg)
-{
-	if (m_bFullScreen)
-	{
-		m_bFullScreen = false;
-		::SetWindowPos(m_hWnd, NULL, m_rcOldWnd.left, m_rcOldWnd.top, m_rcOldWnd.right - m_rcOldWnd.left, m_rcOldWnd.bottom - m_rcOldWnd.top, SWP_NOZORDER);
-		SetFullScreenAndRestoreBtn(false);
-
-		CVerticalLayoutUI* pv = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("vmore")));
-
-		pv->SetAttribute(_T("pos"), _T("153,233,233,389"));
-	}
-	else
-	{
-		m_bFullScreen = true;
-
-		::SetWindowLong(m_hWnd, GWL_STYLE, WS_EX_TOOLWINDOW | WS_EX_TOPMOST | WS_POPUP | WS_CLIPCHILDREN | WS_VISIBLE);
-
-		int screenX = GetSystemMetrics(SM_CXSCREEN);
-		int screenY = GetSystemMetrics(SM_CYSCREEN);
-
-		::GetWindowRect(m_hWnd, &m_rcOldWnd);
-		CVerticalLayoutUI* pv = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("vmore")));
-		std::basic_string<char> strAttr;
-		char chAttr[1000];
-		sprintf(chAttr, "%d,%d,%d,%d", 153, screenY - 240 - 156, 233, screenY - 240);
-		pv->SetAttribute(_T("pos"), UpStringUtility::CharToWchar(chAttr));
-		RECT rcScreen;
-		rcScreen.left = 0;
-		rcScreen.top = 0;
-		rcScreen.right = screenX;
-		rcScreen.bottom = screenY;
-
-		WINDOWPLACEMENT structOldWndPlacement;
-		structOldWndPlacement.length = sizeof(WINDOWPLACEMENT);
-		structOldWndPlacement.flags = 0;
-		structOldWndPlacement.showCmd = SW_SHOWNORMAL;
-		structOldWndPlacement.rcNormalPosition = rcScreen;
-		SetWindowPlacement(m_hWnd, &structOldWndPlacement);
-		SetFullScreenAndRestoreBtn(true);
-	}
-}
-
-void MainWnd::OnClickShowOrHideRightFloatLayout(TNotifyUI & msg)
-{
-	int screenX = GetSystemMetrics(SM_CXSCREEN);
-	int screenY = GetSystemMetrics(SM_CYSCREEN);
-
-	CVerticalLayoutUI* pRightFloatLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("right_float_layout")));
-	if (pRightFloatLayout)
-	{
-		CButtonUI* pShowOrHideBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pRightFloatLayout, _T("show_hide_right_float_layout_btn")));
-		if (pShowOrHideBtn)
-		{
-			CDuiString strUserData = pRightFloatLayout->GetUserData();
-			if (m_bFullScreen)
-			{
-				if (strUserData.Compare(_T("0")) == 0)
-				{
-					RECT rc = { screenX - 231 - 15, 0, screenX, screenY };
-					pRightFloatLayout->SetPos(rc);
-					pRightFloatLayout->SetUserData(_T("1"));
-					pShowOrHideBtn->SetBkImage(strRightBar);
-
-					CButtonUI* pFullScreenAndRestoreBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("fullscreen_restore_btn")));
-					if (pFullScreenAndRestoreBtn)
-					{
-						RECT rc = { 0 };
-						rc = pFullScreenAndRestoreBtn->GetPos();
-						rc.left = rc.left - 231;
-						rc.right = rc.right - 231;
-						pFullScreenAndRestoreBtn->SetPos(rc);
+					if ((*it)->m_strStreamId == msid) {
+						pStreamInfo = *it;
+						break;
 					}
-
-					CVerticalLayoutUI* pCallLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("call_layout")));
-					if (pCallLayout)
-					{
-						RECT rc = { 0 };
-						rc = pCallLayout->GetPos();
-						rc.left = rc.left - 231;
-						rc.right = rc.right - 231;
-						pCallLayout->SetPos(rc);
-					}
+				}
+				if (pStreamInfo == NULL)
+				{
+					pStreamInfo = new StreamInfo();
+					m_listStreamsInfo.push_back(pStreamInfo);
+					pStreamInfo->m_iMediaType |= (media_type == 0 ? 1 : 2);
 				}
 				else
 				{
-					RECT rc = { screenX - 15, 0, screenX, screenY };
-					pRightFloatLayout->SetPos(rc);
-					pRightFloatLayout->SetUserData(_T("0"));
-					pShowOrHideBtn->SetBkImage(strLeftBar);
-
-					CButtonUI* pFullScreenAndRestoreBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("fullscreen_restore_btn")));
-					if (pFullScreenAndRestoreBtn)
-					{
-						RECT rc = { 0 };
-						rc = pFullScreenAndRestoreBtn->GetPos();
-						rc.left = rc.left + 231;
-						rc.right = rc.right + 231;
-						pFullScreenAndRestoreBtn->SetPos(rc);
-					}
-
-					CVerticalLayoutUI* pCallLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("call_layout")));
-					if (pCallLayout)
-					{
-						RECT rc = { 0 };
-						rc = pCallLayout->GetPos();
-						rc.left = rc.left + 231;
-						rc.right = rc.right + 231;
-						pCallLayout->SetPos(rc);
-					}
+					pStreamInfo->m_iMediaType |= (media_type == 0 ? 1 : 2);
 				}
-			}
-		}
-	}
-}
-
-void MainWnd::OnClickMoreBtn(TNotifyUI & msg)
-{
-	CVerticalLayoutUI * more = static_cast<CVerticalLayoutUI *>(m_PaintManager.FindControl(_T("vmore")));
-	more->SetVisible(!more->IsVisible());
-}
-
-void MainWnd::OnClickHDSmoothSwitchBtn(TNotifyUI & msg)
-{
-	CButtonUI * switchBtn = static_cast<CButtonUI *>(msg.pSender);
-	if (!lstrcmpW(switchBtn->GetText().GetData(), UPSTR(main_high_resolution).c_str()))
-	{
-		switchBtn->SetText(UPSTR(main_smooth).c_str());
-		switchBtn->SetForeImage(strSmoothBtnBg);
-		RongRTCEngine::SetVideoMode(RongRTCEngine::VideoProfile_Smooth);
-	}
-	else if (!lstrcmpW(switchBtn->GetText().GetData(), UPSTR(main_smooth).c_str()))
-	{
-		switchBtn->SetText(UPSTR(main_high_resolution).c_str());
-		switchBtn->SetForeImage(strHDBtnBg);
-		RongRTCEngine::SetVideoMode(RongRTCEngine::VideoMode_High_Resolution);
-	}
-}
-
-void MainWnd::ClickTipClose()
-{
-	m_listTipInfo.pop_front();
-
-	if (m_listTipInfo.size() == 0)
-	{
-		ShowTip(false, L"");
-	}
-	else
-	{
-		structTipInfo* pStructTipInfo = m_listTipInfo.front();
-
-		if (pStructTipInfo)
-		{
-			std::wstring strInfo = PaserTipInfoToText(pStructTipInfo);
-			ShowTip(true, strInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-		}
-	}
-}
-
-void MainWnd::ClickTipYes()
-{
-	if (m_listTipInfo.size() == 0)
-	{
-		ShowTip(false, L"");
-	}
-	else
-	{
-		structTipInfo* pStructTipInfo = m_listTipInfo.front();
-
-		if (pStructTipInfo)
-		{
-			PaserTipInfoToDo(pStructTipInfo, true);
-			m_listTipInfo.pop_front();
-			if (m_listTipInfo.size() == 0)
-			{
-				ShowTip(false, L"");
-			}
-			else
-			{
-				pStructTipInfo = m_listTipInfo.front();
-				if (pStructTipInfo)
+				pStreamInfo->m_strUserId = user_id;
+				pStreamInfo->m_strTag = uris[i]["tag"].asString();
+				pStreamInfo->m_strStreamId = msid;
+				if (media_type == 0) 
 				{
-					std::wstring strInfo = PaserTipInfoToText(pStructTipInfo);
-					ShowTip(true, strInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
+					pStreamInfo->m_iState[0] = uris[i]["state"].asInt();
 				}
 				else
 				{
-					ShowTip(false, L"");
+					pStreamInfo->m_iState[1] = uris[i]["state"].asInt();
+					pStreamInfo->m_bSimulcast = uris[i]["features"].isNull() ? false : true;
 				}
+				AddOrUpdateVideoCtrl(pStreamInfo);
+			}
+		}
+	}
+}
+
+void MainWnd::AddOrUpdateVideoCtrl(StreamInfo * pStreamInfo)
+{
+	if (m_pLocalVideoCtrl->GetUserData().GetLength() == 0)
+	{
+		m_pLocalVideoCtrl->SetUserData(UpStringUtility::StringToWstring(pStreamInfo->m_strStreamId).c_str());
+		m_pLocalVideoCtrl->SetTag((UINT_PTR)pStreamInfo);
+		m_pLocalVideoCtrl->SetBitmap(NULL, NULL);
+		CLabelUI* pLocalNoVideo = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(m_pLocalVideoCtrl, _T("local_no_video")));
+		RECT rc = pLocalNoVideo->GetPos();
+		if (((pStreamInfo->m_iMediaType & 2 ) == 2 && pStreamInfo->m_iState[1] == 0) 
+			|| (pStreamInfo->m_iMediaType & 2) != 2) {
+			rc.bottom = rc.top + 80;
+		}
+		else {
+			rc.bottom = rc.top;
+		}
+		pLocalNoVideo->SetPos(rc);
+	}
+	else
+	{
+		if (m_pLocalVideoCtrl->GetUserData().Compare(UpStringUtility::StringToWstring(pStreamInfo->m_strStreamId).c_str()) == 0)
+		{
+			if ((pStreamInfo->m_iMediaType & 2) == 2) {
+				m_pLocalVideoCtrl->SetTag((UINT_PTR)pStreamInfo);
+				CLabelUI* pLocalNoVideo = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(m_pLocalVideoCtrl, _T("local_no_video")));
+				RECT rc = pLocalNoVideo->GetPos();
+				if (pStreamInfo->m_iState[1] == 0) {
+					rc.bottom = rc.top + 80;
+					m_pLocalVideoCtrl->SetBitmap(NULL, NULL);
+				} else {
+					rc.bottom = rc.top;
+				}
+				pLocalNoVideo->SetPos(rc);
 			}
 		}
 		else
 		{
-			ShowTip(false, L"");
-		}
-	}
-}
-
-void MainWnd::ClickTipNo()
-{
-	if (m_listTipInfo.size() == 0)
-	{
-		ShowTip(false, L"");
-	}
-	else
-	{
-		structTipInfo* pStructTipInfo = m_listTipInfo.front();
-
-		if (pStructTipInfo)
-		{
-			PaserTipInfoToDo(pStructTipInfo, false);
-			m_listTipInfo.pop_front();
-			if (m_listTipInfo.size() == 0)
-			{
-				ShowTip(false, L"");
-			}
-			else
-			{
-				pStructTipInfo = m_listTipInfo.front();
-				if (pStructTipInfo)
-				{
-					std::wstring strInfo = PaserTipInfoToText(pStructTipInfo);
-					ShowTip(true, strInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-				}
-				else
-				{
-					ShowTip(false, L"");
+			CVideoUI* pRemoteVideoCtrl = NULL;
+			int iCount = m_pRemoteVideoLayout->GetCount();
+			for (int i = 0; i < iCount; ++i) {
+				CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(m_pRemoteVideoLayout->GetItemAt(i));
+				if (pVideoCtrl->GetUserData().Compare(UpStringUtility::StringToWstring(pStreamInfo->m_strStreamId).c_str()) == 0) {
+					pRemoteVideoCtrl = pVideoCtrl;
+					break;
 				}
 			}
-		}
-		else
-		{
-			ShowTip(false, L"");
-		}
-	}
-}
-
-VideoRender* MainWnd::GetVideoRender(std::string strStreamId)
-{
-	for (std::list<VideoRender*>::iterator it = m_lsVideoRender.begin(); it != m_lsVideoRender.end(); ++it)
-	{
-		if (*it && (*it)->GetStreamId().compare(strStreamId) == 0)
-		{
-			return *it;
-		}
-	}
-	return NULL;
-}
-
-void MainWnd::UserJoinChannel(std::string strStreamId, std::string strName, int iUserRoleType, int iMediaType)
-{
-	DoUserJoinChannel(strStreamId, UpStringUtility::StringToWstring(strName), iMediaType, iUserRoleType);
-}
-
-void MainWnd::DeleteVideoRender(std::string strStreamId, int iType)
-{
-	if (PeerConnectionHelper::m_strUserId.compare(strStreamId) == 0 && iType == 1)
-	{
-		EnableOperationBtn(true, false, false, false, false, false, false);
-		CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("screen_share_btn")));
-		CButtonUI* pCameraBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("camera_btn")));
-		CButtonUI* pMicBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("mic_btn")));
-		if (pScreenShareBtn && pCameraBtn && pMicBtn)
-		{
-			pScreenShareBtn->SetForeImage(strShareNormal);
-			pScreenShareBtn->SetTextColor(0xff000000);
-			pScreenShareBtn->SetUserData(_T("1"));
-
-			pCameraBtn->SetForeImage(strCameraOpen);
-			pCameraBtn->SetTextColor(0xff000000);
-			pCameraBtn->SetUserData(_T("1"));
-
-			pMicBtn->SetForeImage(strMicOpen);
-			pMicBtn->SetTextColor(0xff000000);
-			pMicBtn->SetUserData(_T("1"));
-		}
-	}
-	for (auto it = m_lsNeedDeleteVideoRender.begin(); it != m_lsNeedDeleteVideoRender.end(); ++it)
-	{
-		if ((*it)->GetStreamId().compare(strStreamId) == 0)
-		{
-			CVideoUI* pVideoCtrl = (*it)->GetVideoUI();
-			if (pVideoCtrl && pVideoCtrl->GetName().Compare(_T("local_video")) != 0)
+			if (pRemoteVideoCtrl)
 			{
-				CHorizontalLayoutUI* pRemoteVideoLayout = static_cast<CHorizontalLayoutUI*>(pVideoCtrl->GetParent());
-				if (pRemoteVideoLayout)
-				{
-					pRemoteVideoLayout->Remove(pVideoCtrl);
-				}
-			}
-			delete *it;
-			m_lsNeedDeleteVideoRender.erase(it);
-			break;
-		}
-	}
-}
-
-void MainWnd::ClearVideoRender()
-{
-	for (auto it = m_lsVideoRender.begin(); it != m_lsVideoRender.end(); ++it)
-	{
-		delete *it;
-		m_lsVideoRender.remove(*it);
-		break;
-	}
-	for (auto it = m_lsNeedDeleteVideoRender.begin(); it != m_lsNeedDeleteVideoRender.end(); ++it)
-	{
-		delete *it;
-		m_lsNeedDeleteVideoRender.remove(*it);
-		break;
-	}
-}
-
-void MainWnd::HandleObserverRequestSpeak(std::string strStreamId)
-{
-	ShowCallRequest(true, strStreamId);
-}
-
-void MainWnd::ObserverAgreeHostRequestSpeak()
-{
-	DoUserJoinChannel(PeerConnectionHelper::m_strUserId, m_strName.GetData(),PeerConnectionHelper::m_iMediaType, PeerConnectionHelper::m_iRoleType);
-	EnableOperationBtn(false, true, true, m_bCameraExist, m_bCameraExist, true);
-	UpdateWBUrl();
-}
-
-void MainWnd::NotifyObserverAgreeHostRequestSpeak(std::string strStreamId)
-{
-	DoUserJoinChannel(strStreamId, GetUserNameFromMemberList(strStreamId), 1, 1);
-}
-
-void MainWnd::NotifyHostDoObserverRequestBecomeNormalUser(std::string strStreamId)
-{
-	if (strStreamId.compare(PeerConnectionHelper::m_strUserId) == 0)
-	{
-		DoUserJoinChannel(strStreamId, m_strName.GetData(), PeerConnectionHelper::m_iMediaType, PeerConnectionHelper::m_iRoleType);
-		EnableOperationBtn(false, true, true, m_bCameraExist, m_bCameraExist, true);
-		UpdateWBUrl();
-	}
-	else
-	{
-		DoUserJoinChannel(strStreamId, GetUserNameFromMemberList(strStreamId), 1, 1);
-	}
-}
-
-void MainWnd::HostDoObserverRequestBecomeNormalUser(std::string strStreamId)
-{
-	DoUserJoinChannel(strStreamId, GetUserNameFromMemberList(strStreamId), 1, 1);
-}
-
-void MainWnd::MemberGetHostPower(std::string strUserId, bool bSuccessed)
-{
-	if (PeerConnectionHelper::m_strUserId.compare(strUserId) == 0)
-	{
-		if (bSuccessed)
-		{
-			EnableOperationBtn(false, true, false, m_bCameraExist, m_bCameraExist, true);
-			UpdateUserInfo(PeerConnectionHelper::m_strUserId, PeerConnectionHelper::m_iMediaType, PeerConnectionHelper::m_iRoleType);
-		}
-	}
-	else
-	{
-		if (bSuccessed)
-		{
-			if (PeerConnectionHelper::m_iRoleType != 2)
-			{
-				PeerConnectionHelper::m_iRoleType = 1;
-				EnableOperationBtn(false, true, true, m_bCameraExist, m_bCameraExist, true);
-			}
-			else
-			{
-				EnableOperationBtn(true, false, false, false, false, false, false);
-			}
-			UpdateUserInfo(strUserId, -1, 3);
-			
-			m_clCallRequestTimer.Stop();
-			ShowCallRequest(false, "");
-		}
-	}
-}
-
-void MainWnd::UpdateWBUrl()
-{
-	CBaseWnd* pWnd = WndHelper::GetWbWnd();
-	if (pWnd && m_strWBUrl.GetLength() != 0)
-	{
-		RongRTCEngine::GetEWBServiceUrl();
-	}
-}
-
-void MainWnd::DoUserJoinChannel(std::string strStreamId, std::wstring strFullName, int iMediaType, int iRoleType)
-{
-	if (strStreamId.length() == 0)
-	{
-		return;
-	}
-
-	//init video
-	std::wstring wstrShortName = CreateShortName(strFullName).GetData();
-	
-	int iRgb = CreateRandomRgb(iRoleType);
-	if (iRoleType != 2)
-	{
-		if (m_lsVideoRender.size() == 0)
-		{
-			CVideoUI* pLocalVideoCtrl = static_cast<CVideoUI*>(m_PaintManager.FindControl(_T("local_video")));
-			if (pLocalVideoCtrl)
-			{
-				VideoRender* pVideoRender = new VideoRender(pLocalVideoCtrl, strStreamId, wstrShortName, iRgb, iMediaType, iRoleType);
-				m_lsVideoRender.push_back(pVideoRender);
-				pLocalVideoCtrl->SetTag(UINT_PTR(pVideoRender));
-
-				pVideoRender->SetOutputFrame(false);
-				pLocalVideoCtrl->SetBitmap(NULL, NULL);
-
-				CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pLocalVideoCtrl, _T("local_name_portrait")));
-				if (pPortrait)
-				{
-					RECT rc = { 0 };
-					rc = pPortrait->GetPos();
-					if (rc.bottom == rc.top)
-					{
-						rc.bottom = rc.top + 80;
+				if ((pStreamInfo->m_iMediaType & 2) == 2) {
+					pRemoteVideoCtrl->SetTag((UINT_PTR)pStreamInfo);
+					CButtonUI* pRemoteNoVideo = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pRemoteVideoCtrl, _T("exchange_video_btn")));
+					if (pStreamInfo->m_iState[1] == 0) {
+						pRemoteNoVideo->SetBkImage(strSmallOnlyAudioBg);
+						pRemoteVideoCtrl->SetBitmap(NULL, NULL);
 					}
-					pPortrait->SetPos(rc);
-					pPortrait->SetBkColor(iRgb);
-					pPortrait->SetText(wstrShortName.c_str());
-					pPortrait->SetBkImage(_T("file='main\\loading_42.png' source='0,0,42,42' dest='19,19,61,61' step='35'"));
-					pPortrait->OnActionLoop2(NULL);
+					else {
+						pRemoteNoVideo->SetBkImage(_T(""));
+					}
 				}
 			}
-		}
-		else
-		{
-			CHorizontalLayoutUI* pRemoteVideoLayout = static_cast<CHorizontalLayoutUI*>(m_PaintManager.FindControl(_T("remote_video_layout")));
-			if (pRemoteVideoLayout)
+			else
 			{
 				CVideoUI* pRemoteVideoCtrl = new CVideoUI();
+				pRemoteVideoCtrl->SetUserData(UpStringUtility::StringToWstring(pStreamInfo->m_strStreamId).c_str());
+				pRemoteVideoCtrl->SetTag((UINT_PTR)pStreamInfo);
 				pRemoteVideoCtrl->SetFixedWidth(80);
 				pRemoteVideoCtrl->SetFixedHeight(80);
 				pRemoteVideoCtrl->SetBkColor(0xFF000000);
 				pRemoteVideoCtrl->SetAttribute(_T("fullscreen"), _T("false"));
-				SIZE szBorderRound = {5,5};
+				SIZE szBorderRound = { 5,5 };
 				pRemoteVideoCtrl->SetBorderRound(szBorderRound);
-
-				CLabelUI *pPortrait = new CLabelUI();
-				pPortrait->SetName(_T("name_portrait"));
-				pPortrait->SetFixedWidth(80);
-				pPortrait->SetFixedHeight(80);
-				pPortrait->SetFont(3);
-				pPortrait->SetTextColor(0xffffffff);
-				pPortrait->SetAttribute(_T("align"), _T("center"));
-				pPortrait->SetBkColor(iRgb);
-				pPortrait->SetText(wstrShortName.c_str());
-				pPortrait->SetAttribute(_T("action"), _T("loop2"));
-				pPortrait->SetBkImage(_T("file='main\\loading_42.png' source='0,0,42,42' dest='19,19,61,61' step='35'"));
-				pPortrait->SetBorderRound(szBorderRound);
-				pRemoteVideoCtrl->Add(pPortrait);
-
-				CGifAnimUI* pSpeakingFlag = new CGifAnimUI();
-				pSpeakingFlag->SetName(_T("speaking_flag"));
-				pSpeakingFlag->SetFloat(true);
-				CDuiString strImagePath = CPaintManagerUI::GetResourcePath() + _T("main\\icon_remote_speaking.gif");
-				pSpeakingFlag->UpdateGif(strImagePath);
-				pRemoteVideoCtrl->Add(pSpeakingFlag);
-				
 				CButtonUI* pExchangeBtn = new CButtonUI();
 				pExchangeBtn->SetName(_T("exchange_video_btn"));
 				pExchangeBtn->SetFixedWidth(80);
@@ -1993,545 +668,581 @@ void MainWnd::DoUserJoinChannel(std::string strStreamId, std::wstring strFullNam
 				pExchangeBtn->SetFont(1);
 				pExchangeBtn->SetTextColor(0xffffffff);
 				pExchangeBtn->SetBorderRound(szBorderRound);
-
+				if (((pStreamInfo->m_iMediaType & 2) == 2 && pStreamInfo->m_iState[1] == 0)
+					|| (pStreamInfo->m_iMediaType & 2) != 2) {
+					pExchangeBtn->SetBkImage(strSmallOnlyAudioBg);
+				}
 				pRemoteVideoCtrl->Add(pExchangeBtn);
-				pRemoteVideoLayout->Add(pRemoteVideoCtrl);
-
-				RECT rcSeapkingFlag = { 5,80,74,80 };
-				pSpeakingFlag->SetPos(rcSeapkingFlag);
-
-				VideoRender* pVideoRender = new VideoRender(pRemoteVideoCtrl, strStreamId, wstrShortName, iRgb, iMediaType, iRoleType);
-				m_lsVideoRender.push_back(pVideoRender);
-				pRemoteVideoCtrl->SetTag(UINT_PTR(pVideoRender));
+				m_pRemoteVideoLayout->Add(pRemoteVideoCtrl);
+				pRemoteVideoCtrl->SetBitmap(NULL, NULL);
 			}
 		}
 	}
-	//init member list
-	
-	CListUI* pMeetingMemberList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("member_list")));
-	if (pMeetingMemberList)
+}
+
+void MainWnd::AddOrUpdateUserItem(std::string strUserId)
+{
+	if (m_pUserList)
 	{
-		CListContainerElementUI* pMeetingMemberListItem = NULL;
-		for (int i = 0; i < pMeetingMemberList->GetCount(); ++i)
+		CListContainerElementUI* pUserListItem = NULL;
+		for (int i = 0; i < m_pUserList->GetCount(); ++i)
 		{
-			CListContainerElementUI* pMeetingMemberListItemTemp = NULL;
-			pMeetingMemberListItemTemp = static_cast<CListContainerElementUI*>(pMeetingMemberList->GetItemAt(i));
-			if (pMeetingMemberListItemTemp)
+			CListContainerElementUI* pTempUserListItem = static_cast<CListContainerElementUI*>(m_pUserList->GetItemAt(i));
+			if (pTempUserListItem && pTempUserListItem->GetUserData().Compare(UpStringUtility::StringToWchar(strUserId)) == 0)
 			{
-				if (pMeetingMemberListItemTemp->GetUserData().Compare(UpStringUtility::StringToWchar(strStreamId)) == 0)
-				{
-					pMeetingMemberListItem = pMeetingMemberListItemTemp;
-					break;
-				}
+				pUserListItem = pTempUserListItem;
+				break;
 			}
 		}
-		if(pMeetingMemberListItem == NULL)
+		if (pUserListItem == NULL)
 		{
 			CDialogBuilder dlgBuilder;
-			pMeetingMemberListItem = static_cast<CListContainerElementUI*>(dlgBuilder.Create(_T("list_member_item.xml"), (UINT)0, NULL, &m_PaintManager));
-			pMeetingMemberListItem->SetUserData(UpStringUtility::StringToWchar(strStreamId));
-			pMeetingMemberList->Add(pMeetingMemberListItem);
+			pUserListItem = static_cast<CListContainerElementUI*>(dlgBuilder.Create(_T("list_member_item.xml"), (UINT)0, NULL, &m_PaintManager));
+			pUserListItem->SetUserData(UpStringUtility::UTF8ToUnicode(strUserId).c_str());
+			m_pUserList->AddAt(pUserListItem, 0);
 		}
-		
-		if (pMeetingMemberListItem)
+		if (pUserListItem)
 		{
-			CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("portrait")));
-			if (pPortrait)
+			if (m_mapUsersInfo.find(strUserId) != m_mapUsersInfo.end())
 			{
-				pPortrait->SetTag(iRoleType);
-				pPortrait->SetText(wstrShortName.c_str());
-				pPortrait->SetBkColor(iRgb);
-				CLabelUI* pHostIcon = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("host_icon")));
-				if (pHostIcon)
+				CLabelUI* pName = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pUserListItem, _T("name")));
+				if (pName)
 				{
-					if (iRoleType == 3)
+					pName->SetText(UpStringUtility::UTF8ToUnicode(m_mapUsersInfo[strUserId]->m_strUserName).c_str());
+				}
+				CLabelUI* pJoinMode = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pUserListItem, _T("type")));
+				if (pJoinMode)
+				{
+					if (m_mapUsersInfo[strUserId]->m_iJoinMode == 0)
 					{
-						pHostIcon->SetVisible(true);
+						pJoinMode->SetText(UPSTR(main_video_mode_join).c_str());
 					}
-					else
+					else if (m_mapUsersInfo[strUserId]->m_iJoinMode == 1)
 					{
-						pHostIcon->SetVisible(false);
+						pJoinMode->SetText(UPSTR(main_audio_mode_join).c_str());
+					}
+					else if (m_mapUsersInfo[strUserId]->m_iJoinMode == 2)
+					{
+						pJoinMode->SetText(UPSTR(main_observer_mode_join).c_str());
 					}
 				}
 			}
-			CLabelUI* pName = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("name")));
-			if (pName)
-			{
-				pName->SetText(strFullName.c_str());
-			}
-			int iAudio_Video_Observer = pMeetingMemberListItem->GetTag();
-			if (iMediaType == 0)
-			{
-				iAudio_Video_Observer = 0x100;
-			}
-			else if (iMediaType == 1)
-			{
-				iAudio_Video_Observer = 0x110;
-			}
-			else if (iMediaType == 2)
-			{
-				iAudio_Video_Observer = 0x010;
-			}
-			else if (iMediaType == 3)
-			{
-				iAudio_Video_Observer = 0x000;
-			}
-			if (iRoleType == 2)
-			{
-				iAudio_Video_Observer |= 0x001;
-			}
-			pMeetingMemberListItem->SetTag(iAudio_Video_Observer);
-			ShowDoBtnOnMeetingList(pMeetingMemberListItem, false);
-		}
-	}
-	//init control btn
-	if (PeerConnectionHelper::m_strUserId.compare(strStreamId) == 0)
-	{
-		UpdateMicAndCameraStatus(iMediaType);
-	}
-}
-
-void MainWnd::UpdateUserInfo(std::string strStreamId, int iMediaType, int iRoleType)
-{
-	if (strStreamId.length() == 0)
-	{
-		return;
-	}
-
-	std::wstring wstrShortName;
-	int iRgb = -1;
-	iRgb = CreateRandomRgb(iRoleType);
-
-	//Update video
-	for (auto it = m_lsVideoRender.begin(); it != m_lsVideoRender.end(); ++it)
-	{
-		if ((*it)->GetStreamId().compare(strStreamId) == 0)
-		{
-			CVideoUI* pVideoCtrl = (*it)->GetVideoUI();
-			if (iMediaType != -1)
-			{
-				(*it)->SetMediaType(iMediaType);
-			}
-			if (iRoleType != -1)
-			{
-				if ((((*it)->GetRoleType() == 1 || (*it)->GetRoleType() == 3) && iRoleType == 2)
-					|| ((*it)->GetRoleType() == 2 && (iRoleType == 1 || iRoleType == 3)))
-				{
-					(*it)->SetRoleType(iRoleType);
-					(*it)->SetRgb(iRgb);
-				}
-			}
-			wstrShortName = (*it)->GetShortName();
-			iRgb = (*it)->GetRgb();
-			if (pVideoCtrl)
-			{
-				if ((*it)->GetMediaType() == 0 || (*it)->GetMediaType() == 3)
-				{
-					if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-					{
-						CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_name_portrait")));
-						RECT rc = { 0 };
-						rc = pPortrait->GetPos();
-						if (rc.bottom == rc.top)
-						{
-							rc.bottom = rc.top + 80;
-						}
-						pPortrait->SetPos(rc);
-						pPortrait->SetText((*it)->GetShortName().c_str());
-						if ((*it)->GetRoleType() == 1)
-						{
-							pPortrait->SetBkColor((*it)->GetRgb());
-						}
-						else if ((*it)->GetRoleType() == 2) //观察者
-						{
-							//观察者没有render
-						}
-						else //主持人
-						{
-							pPortrait->SetBkColor((*it)->GetRgb());
-						}
-						pPortrait->StopAction(_T("loop2"));
-						pPortrait->SetBkImage(_T(""));
-					}
-					else
-					{
-						CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("name_portrait")));
-						pPortrait->SetVisible(true);
-						pPortrait->SetText((*it)->GetShortName().c_str());
-						if ((*it)->GetRoleType() == 1)
-						{
-							pPortrait->SetBkColor((*it)->GetRgb());
-						}
-						else if ((*it)->GetRoleType() == 2) //观察者
-						{
-							//观察者没有render
-						}
-						else //主持人
-						{
-							pPortrait->SetBkColor((*it)->GetRgb());
-						}
-						pPortrait->StopAction(_T("loop2"));
-						pPortrait->SetBkImage(_T(""));
-					}
-					(*it)->SetOutputFrame(false);
-					(*it)->SetBitmap(NULL, NULL);
-				}
-				else
-				{
-					if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-					{
-						CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_name_portrait")));
-						RECT rc = { 0 };
-						rc = pPortrait->GetPos();
-						if (rc.bottom != rc.top)
-						{
-							rc.bottom = rc.top;
-						}
-						pPortrait->SetPos(rc);
-						pPortrait->StopAction(_T("loop2"));
-						pPortrait->SetBkImage(_T(""));
-						CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_video_tip")));
-						if (pLocalVideoTip)
-						{
-							RECT rc = pLocalVideoTip->GetPos();
-							if (rc.top == rc.bottom)
-							{
-								(*it)->SetOutputFrame(true);
-							}
-							else
-							{
-								(*it)->SetOutputFrame(false);
-							}
-						}
-					}
-					else
-					{
-						CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("name_portrait")));
-						pPortrait->SetVisible(false);
-						pPortrait->StopAction(_T("loop2"));
-						pPortrait->SetBkImage(_T(""));
-						CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("exchange_video_btn")));
-						if (pExchangeBtn)
-						{
-							if (pExchangeBtn->GetText().GetLength() != 0)
-							{
-								(*it)->SetOutputFrame(false);
-							}
-							else
-							{
-								(*it)->SetOutputFrame(true);
-							}
-						}
-					}
-				}
-
-				if ((*it)->GetRoleType() != 2 && PeerConnectionHelper::m_strUserId.compare(strStreamId) != 0)
-				{
-					if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-					{
-						std::string strSubscribeStreamJson = "[{\"user_id\":\"";
-						strSubscribeStreamJson.append(strStreamId);
-						strSubscribeStreamJson.append("\",\"stream_type\":1}]");
-						RongRTCEngine::SubscribeStream(strSubscribeStreamJson.c_str());
-					}
-					else
-					{
-						std::string strSubscribeStreamJson = "[{\"user_id\":\"";
-						strSubscribeStreamJson.append(strStreamId);
-						strSubscribeStreamJson.append("\",\"stream_type\":2}]");
-						RongRTCEngine::SubscribeStream(strSubscribeStreamJson.c_str());
-					}
-				}
-			}
-			break;
-		}
-	}
-
-	CListUI* pMeetingMemberList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("member_list")));
-	if (pMeetingMemberList)
-	{
-		CListContainerElementUI* pMeetingMemberListItem = NULL;
-		for (int i = 0; i < pMeetingMemberList->GetCount(); ++i)
-		{
-			CListContainerElementUI* pMeetingMemberListItemTemp = NULL;
-			pMeetingMemberListItemTemp = static_cast<CListContainerElementUI*>(pMeetingMemberList->GetItemAt(i));
-			if (pMeetingMemberListItemTemp)
-			{
-				if (pMeetingMemberListItemTemp->GetUserData().Compare(UpStringUtility::StringToWchar(strStreamId)) == 0)
-				{
-					pMeetingMemberListItem = pMeetingMemberListItemTemp;
-					CLabelUI* pHostIcon = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItemTemp, _T("host_icon")));
-					if (pHostIcon)
-					{
-						if (iRoleType == 3)
-						{
-							pHostIcon->SetVisible(true);
-						}
-					}
-				}
-				else
-				{
-					CLabelUI* pHostIcon = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItemTemp, _T("host_icon")));
-					if (pHostIcon)
-					{
-						if (iRoleType == 3)
-						{
-							pHostIcon->SetVisible(false);
-						}
-					}
-				}
-			}
-		}
-		if (pMeetingMemberListItem)
-		{
-			CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("portrait")));
-			if (pPortrait)
-			{
-				if (wstrShortName.length() != 0)
-				{
-					pPortrait->SetText(wstrShortName.c_str());
-				}
-				if (iRoleType == 1)
-				{
-					if (iRgb != -1)
-					{
-						pPortrait->SetBkColor(iRgb);
-					}
-				}
-				else if (iRoleType == 2) //观察者
-				{
-					if (iRgb != -1)
-					{
-						pPortrait->SetBkColor(iRgb);
-					}
-				}
-				else //主持人
-				{
-					if (iRgb != -1)
-					{
-						pPortrait->SetBkColor(iRgb);
-					}
-				}
-			}
-
-			int iAudio_Video_Observer = pMeetingMemberListItem->GetTag();
-			if (iMediaType == 0)
-			{
-				iAudio_Video_Observer = 0x100;
-			}
-			else if (iMediaType == 1)
-			{
-				iAudio_Video_Observer = 0x110;
-			}
-			else if (iMediaType == 2)
-			{
-				iAudio_Video_Observer = 0x010;
-			}
-			else if (iMediaType == 3)
-			{
-				iAudio_Video_Observer = 0x000;
-			}
-			if (iRoleType == 2)
-			{
-				iAudio_Video_Observer |= 0x001;
-			}
-			pMeetingMemberListItem->SetTag(iAudio_Video_Observer);
 		}
 	}
 }
 
-void MainWnd::SetVideoInvalid(std::string strStreamId)
+void MainWnd::AddOrUpdateUserInfoFromGet(std::string strUserInfo)
 {
-	VideoRender* pVideoRender = GetVideoRender(strStreamId);
-	if (pVideoRender == NULL)
+	Json::Value root;
+	Json::Reader reader;
+	if (reader.parse(strUserInfo, root))
 	{
-		return;
-	}
-	CVideoUI* pVideoCtrl = pVideoRender->GetVideoUI();
-	if (pVideoCtrl)
-	{
-		if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
+		for (unsigned i = 0; i < root.size(); ++i)
 		{
-			CHorizontalLayoutUI* pRemoteVideoLayout = static_cast<CHorizontalLayoutUI*>(m_PaintManager.FindControl(_T("remote_video_layout")));
-			CVideoUI* pVideoCtrl_1 = NULL;
-			for (int i = 0; i < pRemoteVideoLayout->GetCount(); ++i)
+			Json::Value::Members members = root[i].getMemberNames();
+			if (members.size() == 0)
 			{
-				CVideoUI* pTempVideoCtrl_1 = static_cast<CVideoUI*>(pRemoteVideoLayout->GetItemAt(i));
-				if (pTempVideoCtrl_1->IsVisible())
-				{
-					pVideoCtrl_1 = pTempVideoCtrl_1;
-					break;
+				continue;
+			}
+			std::string user_id = members.front();
+			Json::Value user_info = root[i][user_id];
+			std::string strUserId = user_info["userId"].asString();
+			UserInfo* pUserInfo = NULL;
+			if (m_mapUsersInfo.find(strUserId) == m_mapUsersInfo.end()) 
+			{
+				if (user_info.isMember("userName")) {
+					pUserInfo = new UserInfo();
+					m_mapUsersInfo.insert(std::pair<std::string, UserInfo*>(strUserId, pUserInfo));
 				}
 			}
-
-			if (pVideoCtrl_1)
+			else
 			{
-				VideoRender* pVideoRender_1 = (VideoRender*)pVideoCtrl_1->GetTag();
-				pVideoCtrl->SetTag(UINT_PTR(pVideoRender_1));
-				pVideoRender_1->SetOutputFrame(false);
-				pVideoRender_1->SetVideoUI(pVideoCtrl);
-
-				if (PeerConnectionHelper::m_strUserId.compare(pVideoRender_1->GetStreamId()) != 0)
+				pUserInfo = m_mapUsersInfo[strUserId];
+			}
+			if (pUserInfo)
+			{
+				pUserInfo->m_strUserName = user_info["userName"].asString();
+				if (user_info["joinTime"].isInt64())
 				{
-					std::string strSubscribeStreamJson = "[{\"user_id\":\"";
-					strSubscribeStreamJson.append(pVideoRender_1->GetStreamId());
-					strSubscribeStreamJson.append("\",\"stream_type\":1}]");
-					RongRTCEngine::SubscribeStream(strSubscribeStreamJson.c_str());
-				}
-
-				if (pVideoRender_1->GetMediaType() == 0 || pVideoRender_1->GetMediaType() == 3)
-				{
-					CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_name_portrait")));
-					RECT rc = { 0 };
-					rc = pPortrait->GetPos();
-					if (rc.bottom == rc.top)
-					{
-						rc.bottom = rc.top + 80;
-					}
-					
-					pPortrait->SetPos(rc);
-					pPortrait->SetText(pVideoRender_1->GetShortName().c_str());
-					if (pVideoRender_1->GetRoleType() == 1)
-					{
-						pPortrait->SetBkColor(pVideoRender_1->GetRgb());
-					}
-					else if (pVideoRender_1->GetRoleType() == 2) //观察者
-					{
-						pPortrait->SetBkColor(pVideoRender_1->GetRgb());
-					}
-					else //主持人
-					{
-						pPortrait->SetBkColor(pVideoRender_1->GetRgb());
-					}
-					pVideoRender_1->SetBitmap(NULL, NULL);
+					pUserInfo->m_iJoinTime = user_info["joinTime"].asInt64();
 				}
 				else
 				{
-					CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_name_portrait")));
-					RECT rc = { 0 };
-					rc = pPortrait->GetPos();
-					if (rc.bottom != rc.top)
-					{
-						rc.bottom = rc.top;
-					}
-					pPortrait->SetPos(rc);
+					pUserInfo->m_iJoinTime = std::stoll(user_info["joinTime"].asString());
+				}
+				pUserInfo->m_iJoinMode = user_info["joinMode"].asInt();
+				AddOrUpdateUserItem(strUserId);
+			}
+		}
+	}
+}
 
-					CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_video_tip")));
-					CButtonUI* pExchangeBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl_1, _T("exchange_video_btn")));
-					if (pLocalVideoTip && pExchangeBtn)
-					{
-						if (pExchangeBtn->GetText().GetLength() != 0)
+void MainWnd::AddOrUpdateUserInfoFromNotify(std::string strUserInfo)
+{
+	Json::Value root;
+	Json::Reader reader;
+	if (reader.parse(strUserInfo, root))
+	{
+		std::string strUserId = root["infoKey"].asString();
+		UserInfo* pUserInfo = NULL;
+		if (m_mapUsersInfo.find(strUserId) == m_mapUsersInfo.end())
+		{
+			pUserInfo = new UserInfo();
+			m_mapUsersInfo.insert(std::pair<std::string, UserInfo*>(strUserId, pUserInfo));
+		}
+		else
+		{
+			pUserInfo = m_mapUsersInfo[strUserId];
+		}
+		if (pUserInfo)
+		{
+			Json::Value user_info = root["infoValue"];
+			pUserInfo->m_strUserName = user_info["userName"].asString();
+			if (user_info["joinTime"].isInt64())
+			{
+				pUserInfo->m_iJoinTime = user_info["joinTime"].asInt64();
+			}
+			else
+			{
+				pUserInfo->m_iJoinTime = std::stoll(user_info["joinTime"].asString());
+			}
+			pUserInfo->m_iJoinMode = user_info["joinMode"].asInt();
+			AddOrUpdateUserItem(strUserId);
+		}
+	}
+}
+
+void MainWnd::RemoveVideoCtrl(std::string strStreams)
+{
+	Json::Value root;
+	Json::Reader reader;
+	if (reader.parse(strStreams, root))
+	{
+		for (unsigned i = 0; i < root.size(); i++)
+		{
+			Json::Value uris_object = root[i];
+			Json::Value::Members members = uris_object.getMemberNames();
+			if (members.size() == 0)
+			{
+				continue;
+			}
+			std::string user_id = members.front();
+			Json::Value uris = uris_object[user_id];
+			for (unsigned i = 0; i < uris.size(); ++i) {
+				std::string msid = uris[i]["msid"].asString();
+				int media_type = uris[i]["mediaType"].asInt();
+				for (std::list<StreamInfo*>::iterator it = m_listStreamsInfo.begin(); it != m_listStreamsInfo.end(); ++it)
+				{
+					if ((*it)->m_strStreamId == msid) {
+						StreamInfo* pStreamInfo = *it;
+						if (pStreamInfo == NULL)
 						{
-							RECT rc = pLocalVideoTip->GetPos();
-							if (rc.top == rc.bottom)
-							{
-								rc.bottom = rc.top + 20;
-							}
-							pLocalVideoTip->SetPos(rc);
-							pVideoRender_1->SetOutputFrame(false);
-							pVideoRender_1->SetBitmap(NULL, NULL);
+							continue;
 						}
 						else
 						{
-							RECT rc = pLocalVideoTip->GetPos();
-							if (rc.top != rc.bottom)
-							{
-								rc.bottom = rc.top;
-							}
-							pLocalVideoTip->SetPos(rc);
-
-							BITMAPINFO* pInfo = NULL;
-							unsigned char* buffer = NULL;
-							pVideoCtrl_1->GetBitmap(&pInfo, &buffer);
-							pVideoCtrl->SetBitmap(pInfo, buffer);
-							pVideoRender_1->SetOutputFrame(true);
+							pStreamInfo->m_iMediaType &= ~(media_type == 0 ? 1 : 2);
 						}
+						RemoveVideoCtrl(pStreamInfo);
+						if (pStreamInfo->m_iMediaType == 0)
+						{
+							delete *it;
+							m_listStreamsInfo.erase(it);
+						}
+						break;
 					}
 				}
-				pRemoteVideoLayout->Remove(pVideoCtrl_1);
-			}
-			else
-			{
-				CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_name_portrait")));
-				RECT rc = { 0 };
-				rc = pPortrait->GetPos();
-				if (rc.bottom != rc.top)
-				{
-					rc.bottom = rc.top;
-				}
-				pPortrait->SetPos(rc);
-
-				BITMAPINFO* pInfo = NULL;
-				unsigned char* buffer = NULL;
-				pVideoCtrl->SetBitmap(pInfo, buffer);
-				pVideoCtrl->SetTag(0);
 			}
 		}
-		else
-		{
-			pVideoCtrl->SetVisible(false);
-		}
 	}
-	
-	for (std::list<VideoRender*>::iterator it = m_lsVideoRender.begin(); it != m_lsVideoRender.end(); ++it)
-	{
-		if ((*it) == pVideoRender)
-		{
-			m_lsVideoRender.erase(it);
-			break;
-		}
-	}
-	m_lsNeedDeleteVideoRender.push_back(pVideoRender);
 }
 
-void MainWnd::OnHostRequestOpenMedia(std::string strHostId, int iMediaType)
+void MainWnd::RemoveVideoCtrl(StreamInfo * pStreamInfo)
 {
-	structTipInfo* pStructTipInfo = new structTipInfo();
-	if (pStructTipInfo)
+	std::string strLocalStreamId = UpStringUtility::WstringToString(m_pLocalVideoCtrl->GetUserData().GetData());
+	if (strLocalStreamId == pStreamInfo->m_strStreamId)
 	{
-		if (iMediaType == 2)
+		StreamInfo * pStreamInfoTemp = NULL;
+		if (pStreamInfo->m_iMediaType == 0)
 		{
-			pStructTipInfo->m_iDoType = 3;
-			pStructTipInfo->m_iHostControlMediaType = ControlMediaType_Audio;
-		}
-		else if (iMediaType == 1)
-		{
-			pStructTipInfo->m_iDoType = 4;
-			pStructTipInfo->m_iHostControlMediaType = ControlMediaType_Video;
-		}
-		else
-		{
-			return; //其它暂不处理
-		}
-		pStructTipInfo->m_strResponsedUserId = strHostId;
-
-		if (m_listTipInfo.size() == 0)
-		{
-			std::wstring strTipInfo = PaserTipInfoToText(pStructTipInfo);
-			ShowTip(true, strTipInfo, UPSTR(main_messagebox_yes).c_str(), UPSTR(main_messagebox_no).c_str());
-			m_listTipInfo.push_back(pStructTipInfo);
-		}
-		else
-		{
-			bool bHaveExist = TipInfoHaveExist(pStructTipInfo->m_iDoType);
-			if (bHaveExist)
+			CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(m_pRemoteVideoLayout->GetItemAt(0));
+			if (pVideoCtrl)
 			{
-				delete pStructTipInfo;
+				pStreamInfoTemp = (StreamInfo*)pVideoCtrl->GetTag();
+				m_pLocalVideoCtrl->SetUserData(pVideoCtrl->GetUserData());
+				m_pLocalVideoCtrl->SetTag(pVideoCtrl->GetTag());
+				m_pRemoteVideoLayout->RemoveAt(0);
 			}
 			else
 			{
-				m_listTipInfo.push_back(pStructTipInfo);
+				m_pLocalVideoCtrl->SetUserData(L"");
+				m_pLocalVideoCtrl->SetTag(0);
+			}
+			m_pLocalVideoCtrl->SetBitmap(NULL, NULL);
+		}
+		CLabelUI* pLocalNoVideo = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(m_pLocalVideoCtrl, _T("local_no_video")));
+		RECT rc = pLocalNoVideo->GetPos();
+		if (pStreamInfoTemp)
+		{
+			if (((pStreamInfoTemp->m_iMediaType & 2) == 2 && pStreamInfoTemp->m_iState[1] == 0)
+				|| (pStreamInfoTemp->m_iMediaType & 2) != 2) {
+				rc.bottom = rc.top + 80;
+			}
+			else {
+				rc.bottom = rc.top;
+			}
+		}
+		else
+		{
+			rc.bottom = rc.top;
+		}
+		pLocalNoVideo->SetPos(rc);
+	}
+	else
+	{
+		std::vector<int> vectorNeedRemoveVideoCtrl;
+		int iCount = m_pRemoteVideoLayout->GetCount();
+		for (int i = 0; i < iCount; ++i)
+		{
+			CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(m_pRemoteVideoLayout->GetItemAt(i));
+			if (pVideoCtrl)
+			{
+				std::string strRemoteStreamId = UpStringUtility::WstringToString(pVideoCtrl->GetUserData().GetData());
+				if (strRemoteStreamId == pStreamInfo->m_strStreamId)
+				{
+					if (pStreamInfo->m_iMediaType == 0)
+					{
+						m_pRemoteVideoLayout->RemoveAt(i);
+					}
+					else
+					{
+						if (((pStreamInfo->m_iMediaType & 2) == 2 && pStreamInfo->m_iState[1] == 0)
+							|| (pStreamInfo->m_iMediaType & 2) != 2) {
+							CButtonUI* pRemoteNoVideo = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("exchange_video_btn")));
+							if (pStreamInfo->m_iState[1] == 0) {
+								pRemoteNoVideo->SetBkImage(strSmallOnlyAudioBg);
+								pVideoCtrl->SetBitmap(NULL, NULL);
+							}
+							else {
+								pRemoteNoVideo->SetBkImage(_T(""));
+							}
+						}
+					}
+					break;
+				}
 			}
 		}
 	}
+}
+
+void MainWnd::RemoveVideoCtrlAndUserInfo(std::string strUserId)
+{
+	std::vector<CVideoUI*> vectorNeedRemoveVideoCtrl;
+	int iCount = m_pRemoteVideoLayout->GetCount();
+	for (int i = 0; i < iCount; ++i)
+	{
+		CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(m_pRemoteVideoLayout->GetItemAt(i));
+		if (pVideoCtrl)
+		{
+			std::string strRemoteUserId = GetUserIdFromStreamId(UpStringUtility::WstringToString(pVideoCtrl->GetUserData().GetData()));
+			if (strRemoteUserId.compare(strUserId) == 0)
+			{
+				vectorNeedRemoveVideoCtrl.push_back(pVideoCtrl);
+			}
+		}
+	}
+	for (std::vector<CVideoUI*>::iterator it = vectorNeedRemoveVideoCtrl.begin(); it != vectorNeedRemoveVideoCtrl.end(); ++it)
+	{
+		m_pRemoteVideoLayout->Remove(*it);
+	}
+	std::string strLocalUserId = GetUserIdFromStreamId(UpStringUtility::WstringToString(m_pLocalVideoCtrl->GetUserData().GetData()));
+	if (strLocalUserId.compare(strUserId) == 0)
+	{
+		StreamInfo* pStreamInfoTemp = NULL;
+		CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(m_pRemoteVideoLayout->GetItemAt(0));
+		if (pVideoCtrl)
+		{
+			m_pLocalVideoCtrl->SetUserData(pVideoCtrl->GetUserData());
+			m_pLocalVideoCtrl->SetTag(pVideoCtrl->GetTag());
+			pStreamInfoTemp = (StreamInfo*)pVideoCtrl->GetTag();
+			m_pRemoteVideoLayout->RemoveAt(0);
+		}
+		else
+		{
+			m_pLocalVideoCtrl->SetUserData(L"");
+			m_pLocalVideoCtrl->SetTag(0);
+		}
+		m_pLocalVideoCtrl->SetBitmap(NULL, NULL);
+
+		CLabelUI* pLocalNoVideo = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(m_pLocalVideoCtrl, _T("local_no_video")));
+		RECT rc = pLocalNoVideo->GetPos();
+		if (pStreamInfoTemp)
+		{
+			if (((pStreamInfoTemp->m_iMediaType & 2) == 2 && pStreamInfoTemp->m_iState[1] == 0)
+				|| (pStreamInfoTemp->m_iMediaType & 2) != 2) {
+				rc.bottom = rc.top + 80;
+			}
+			else {
+				rc.bottom = rc.top;
+			}
+		}
+		else
+		{
+			rc.bottom = rc.top;
+		}
+		pLocalNoVideo->SetPos(rc);
+	}
+	for (std::list<StreamInfo*>::iterator it = m_listStreamsInfo.begin(); it != m_listStreamsInfo.end();)
+	{
+		if ((*it)->m_strUserId.compare(strUserId) == 0)
+		{
+			delete *it;
+			it = m_listStreamsInfo.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+	for (int i = 0; i < m_pUserList->GetCount(); ++i)
+	{
+		CListContainerElementUI* pUserListItem = static_cast<CListContainerElementUI*>(m_pUserList->GetItemAt(i));
+		if (pUserListItem)
+		{
+			std::string strUserIdTemp = UpStringUtility::UnicodeToUTF8(pUserListItem->GetUserData().GetData());
+			if (strUserIdTemp.compare(strUserId) == 0)
+			{
+				m_pUserList->Remove(pUserListItem);
+				break;
+			}
+		}
+	}
+	if (m_mapUsersInfo.find(strUserId) != m_mapUsersInfo.end())
+	{
+		delete m_mapUsersInfo[strUserId];
+		m_mapUsersInfo.erase(strUserId);
+	}
+}
+
+void MainWnd::RenderVideoData(std::string strStreamId, BITMAPINFO * pBitmapInfo, unsigned char * pData)
+{
+	if (m_pLocalVideoCtrl && m_pRemoteVideoLayout)
+	{
+		std::string strLocalStreamId = UpStringUtility::WstringToString(m_pLocalVideoCtrl->GetUserData().GetData());
+		if (strLocalStreamId.compare(strStreamId) == 0)
+		{
+			StreamInfo* pStreamInfo = (StreamInfo*)m_pLocalVideoCtrl->GetTag();
+			if (pStreamInfo && pStreamInfo->m_iState[1] == 0) {
+				pBitmapInfo = NULL; pData = NULL;
+			}
+			m_pLocalVideoCtrl->SetBitmap(pBitmapInfo, pData);
+		}
+		else
+		{
+			int iCount = m_pRemoteVideoLayout->GetCount();
+			for (int i = 0; i < iCount; ++i)
+			{
+				CVideoUI* pVideoCtrl = static_cast<CVideoUI*>(m_pRemoteVideoLayout->GetItemAt(i));
+				if (pVideoCtrl)
+				{
+					std::string strRemoteStreamId = UpStringUtility::WstringToString(pVideoCtrl->GetUserData().GetData());
+					if (strRemoteStreamId.compare(strStreamId) == 0)
+					{
+						StreamInfo* pStreamInfo = (StreamInfo*)pVideoCtrl->GetTag();
+						if (pStreamInfo && pStreamInfo->m_iState[1] == 0) {
+							pBitmapInfo = NULL; pData = NULL;
+						}
+						pVideoCtrl->SetBitmap(pBitmapInfo, pData);
+					}
+				}
+			}
+		}
+	}
+}
+
+std::string MainWnd::CreateLocalStreamJson(int iPublishStreamType)
+{
+	Json::Value uri_array;
+	if ((iPublishStreamType & RongRTCStreamType_Audio) == RongRTCStreamType_Audio)
+	{
+		Json::Value uri;
+		uri["msid"] = PeerConnectionHelper::m_strUserId + "_RongCloudRTC";
+		uri["tag"] = "RongCloudRTC";
+		uri["mediaType"] = 0;
+		uri["state"] = m_bMuteMic ? 0 : 1;
+		uri_array[PeerConnectionHelper::m_strUserId].append(uri);
+	}
+	if ((iPublishStreamType & RongRTCStreamType_Video) == RongRTCStreamType_Video)
+	{
+		Json::Value uri;
+		uri["msid"] = PeerConnectionHelper::m_strUserId + "_RongCloudRTC";
+		uri["tag"] = "RongCloudRTC";
+		uri["mediaType"] = 1;
+		uri["state"] = m_bMuteCamera ? 0 : 1;
+		uri_array[PeerConnectionHelper::m_strUserId].append(uri);
+	}
+	if (uri_array.size() == 0)
+	{
+		Json::Value uri;
+		uri_array[PeerConnectionHelper::m_strUserId] = uri;
+	}
+	Json::Value uris;
+	uris.append(uri_array);
+	return uris.toStyledString();
+}
+
+std::string MainWnd::CreateSubscribeStreamJson()
+{
+	bool bDisplayOnLocalVideo = true;
+	Json::Value uris;
+	
+	for (std::list<StreamInfo*>::iterator it = m_listStreamsInfo.begin(); it != m_listStreamsInfo.end(); ++it)
+	{
+		StreamInfo* pStreamInfo = *it;
+		if (PeerConnectionHelper::m_strUserId.compare(pStreamInfo->m_strUserId) != 0)
+		{
+			Json::Value uri_array;
+			if ((pStreamInfo->m_iMediaType & RongRTCStreamType_Audio) == RongRTCStreamType_Audio)
+			{
+				Json::Value uri;
+				uri["tag"] = pStreamInfo->m_strTag;
+				uri["mediaType"] = 0;
+				uri_array[pStreamInfo->m_strUserId].append(uri);
+			}
+			if ((pStreamInfo->m_iMediaType & RongRTCStreamType_Video) == RongRTCStreamType_Video)
+			{
+				Json::Value uri;
+				uri["tag"] = pStreamInfo->m_strTag;
+				uri["mediaType"] = 1;
+				if (PeerConnectionHelper::m_iResourceType == 0 && pStreamInfo->m_bSimulcast == true && bDisplayOnLocalVideo == true)
+				{
+					uri["simulcast"] = 1;
+					bDisplayOnLocalVideo = false;
+				}
+				uri_array[pStreamInfo->m_strUserId].append(uri);
+			}
+			uris.append(uri_array);
+		}
+	}
+	return uris.toStyledString();
+}
+
+void MainWnd::SetLocalUserInfo()
+{
+	Json::Value key_value;
+	key_value["userId"] = PeerConnectionHelper::m_strUserId;
+	key_value["userName"] = PeerConnectionHelper::m_strUserName;
+	key_value["joinTime"] = 0;
+	if (PeerConnectionHelper::m_iResourceType == RongRTCStreamType_AudioVideo)
+	{
+		key_value["joinMode"] = 0;
+	}
+	else if (PeerConnectionHelper::m_iResourceType == RongRTCStreamType_Audio)
+	{
+		key_value["joinMode"] = 1;
+	}
+	else
+	{
+		key_value["joinMode"] = 2;
+	}
+	Json::Value keyinfo_valueinfo;
+	keyinfo_valueinfo["infoKey"] = PeerConnectionHelper::m_strUserId;
+	keyinfo_valueinfo["infoValue"] = key_value;
+	RongRTCEngine::SetRoomAttributeValue(PeerConnectionHelper::m_strUserId.c_str(), key_value.toStyledString().c_str(),
+		"SealRTC:SetRoomInfo", keyinfo_valueinfo.toStyledString().c_str(), PeerConnectionHelper::GetInstance());
+}
+
+void MainWnd::SetConnectionTime(unsigned __int64 iTime)
+{
+	CLabelUI* pConnectTime = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("connect_time")));
+	if (pConnectTime)
+	{
+		CDuiString strTemp;
+		__int64 iHour = iTime / 3600;
+		__int64 iMinute = (iTime - iHour * 3600) / 60;
+		__int64 iSecond = iTime - iHour * 3600 - iMinute * 60;
+		strTemp.Format(_T("%02I64d:%02I64d:%02I64d"), iHour, iMinute, iSecond);
+		pConnectTime->SetText(strTemp);
+	}
+}
+
+void MainWnd::AddMessageTipToMessageList(std::wstring wstrText)
+{
+	CListUI* pNotificationList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("notification_list")));
+	if (pNotificationList)
+	{
+		CDialogBuilder dlgBuilder;
+		CListContainerElementUI* pMessageListItem = static_cast<CListContainerElementUI*>(dlgBuilder.Create(_T("list_message_item.xml"), (UINT)0, NULL, &m_PaintManager));
+		if (pMessageListItem)
+		{
+			CLabelUI* pTime = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMessageListItem, _T("message_time")));
+			CTextUI* pMessage = static_cast<CTextUI*>(m_PaintManager.FindSubControlByName(pMessageListItem, _T("message_text")));
+
+			if (pTime && pMessage && wstrText.empty() == false)
+			{
+				CDuiString strTime = WndHelper::GetNowTime();
+				pTime->SetText(strTime);
+				CDuiString strMessage = wstrText.c_str();
+				pMessage->SetText(strMessage);
+				SIZE TempSize = { pMessage->GetFixedWidth(), 1000 };
+				SIZE size = CRenderEngine::GetTextSize(m_PaintManager.GetPaintDC(), &m_PaintManager, TempSize, strMessage.GetData(), 1, DT_WORDBREAK);
+				pMessage->SetFixedHeight(size.cy);
+				pMessageListItem->SetFixedHeight(size.cy + 5 + 18);
+				if (pNotificationList->GetCount() > 1000)
+				{
+					pNotificationList->RemoveAll();
+				}
+				pNotificationList->Add(pMessageListItem);
+
+				::UpdateWindow(m_hWnd);
+				pNotificationList->EndDown();
+			}
+		}
+	}
+}
+
+std::wstring MainWnd::CreateNotificationText(std::wstring wstrName, std::wstring wstrText)
+{
+	std::wstring wstrInfo;
+	if (wstrName.empty() == false)
+	{
+		if (wstrName.length() > 17)
+		{
+			wstrInfo.append(wstrName.substr(0, 17));
+			wstrInfo.append(L"...");
+		}
+		else
+		{
+			wstrInfo.append(wstrName);
+		}
+	}
+	wstrInfo.append(L" ");
+	wstrInfo.append(wstrText);
+	return wstrInfo;
+}
+
+std::string MainWnd::GetUserIdFromStreamId(const std::string & stream_id)
+{
+	std::string user_id;
+	if (stream_id.length() >= 3) {
+		int iPos = stream_id.rfind("_");
+		if (iPos != stream_id.npos) {
+			user_id = stream_id.substr(0, iPos);
+		}
+		else {
+			user_id = stream_id;
+		}
+	}
+	else {
+		user_id = stream_id;
+	}
+	return user_id;
 }
 
 void MainWnd::InitCtrl()
 {
-	EnableOperationBtn(false, false, false, false, false, false);
-
-	CButtonUI* pChangeVideoSizeBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("change_video_size_btn")));
-	if (pChangeVideoSizeBtn)
+	CButtonUI* pShowStateInfoBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("show_info_btn")));
+	if (pShowStateInfoBtn)
 	{
 		bool bRelease = false;
 #ifdef APP_Release
@@ -2541,14 +1252,26 @@ void MainWnd::InitCtrl()
 #endif // APP_Release
 		if (bRelease)
 		{
-			pChangeVideoSizeBtn->SetVisible(false);
+			pShowStateInfoBtn->SetVisible(false);
 		}
 	}
-	CGifAnimUI* pLocalSpeakingFlag = static_cast<CGifAnimUI*>(m_PaintManager.FindControl(_T("local_speaking_flag")));
-	if (pLocalSpeakingFlag)
+	m_pLocalVideoCtrl = static_cast<CVideoUI*>(m_PaintManager.FindControl(_T("local_video")));
+	m_pRemoteVideoLayout = static_cast<CHorizontalLayoutUI*>(m_PaintManager.FindControl(_T("remote_video_layout")));
+	m_pUserList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("member_list")));
+
+	CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("screen_share_btn")));
+	CButtonUI* pCameraBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("camera_btn")));
+	if (pScreenShareBtn && pCameraBtn) 
 	{
-		CDuiString strImagePath = CPaintManagerUI::GetResourcePath() + _T("main\\icon_remote_speaking.gif");
-		pLocalSpeakingFlag->UpdateGif(strImagePath);
+		bool bEnable = (PeerConnectionHelper::m_iResourceType & RongRTCStreamType_Video) == RongRTCStreamType_Video;
+		pScreenShareBtn->SetEnabled(bEnable);
+		pCameraBtn->SetEnabled(bEnable);
+	}
+	CButtonUI* pMicBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("mic_btn")));
+	if (pMicBtn)
+	{
+		bool bEnable = (PeerConnectionHelper::m_iResourceType & RongRTCStreamType_Audio) == RongRTCStreamType_Audio;
+		pMicBtn->SetEnabled(bEnable);
 	}
 }
 
@@ -2556,8 +1279,10 @@ void MainWnd::InitText()
 {
 	CDuiString strTitleText = UPSTR(main_title_tip).c_str();
 	strTitleText.Append(_T(" "));
-	strTitleText.Append(m_strChannelId);
-	SetJoinChannelStatus(strTitleText.GetData());
+	strTitleText.Append(UpStringUtility::UTF8ToUnicode(PeerConnectionHelper::m_strChannelId).c_str());
+	CLabelUI* pTitle = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("channel_id")));
+	if (pTitle) pTitle->SetText(strTitleText);
+
 	CLabelUI* pTime = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("connect_time")));
 	if (pTime) pTime->SetText(UPSTR(main_time_tip).c_str());
 	CLabelUI* pLocalVideoTip = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("local_video_tip")));
@@ -2585,10 +1310,6 @@ void MainWnd::InitText()
 	if (pMic) pMic->SetText(UPSTR(main_mic_mute).c_str());
 	CButtonUI* pHangUp = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("hangup_btn")));
 	if (pHangUp) pHangUp->SetText(UPSTR(main_hangeup).c_str());
-	CButtonUI* pSwitch = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("hd_smooth_switch_btn")));
-	if (pSwitch) pSwitch->SetText(UPSTR(main_smooth).c_str());
-	CButtonUI* pMore = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("more_btn")));
-	if (pMore) pMore->SetText(UPSTR(main_more).c_str());
 }
 
 void MainWnd::Timeout(UpTimer * timer)
@@ -2599,988 +1320,5 @@ void MainWnd::Timeout(UpTimer * timer)
 		m_iConnectionSecond++;
 		SetConnectionTime(m_iConnectionSecond);
 		m_clConnectionTimer.Start(1000, this);
-	}
-	else if (timer == &m_clCallRequestTimer)
-	{
-		ShowCallRequest(false, "");
-	}
-}
-
-void MainWnd::SetJoinChannelStatus(std::wstring strText)
-{
-	CLabelUI* pChannelId = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("channel_id")));
-	if (pChannelId)
-	{
-		pChannelId->SetText(strText.c_str());
-	}
-}
-
-void MainWnd::SetSendRecvLosPacektPercent(int iSendLostPacketsPercent, int iReceiveLostPacketsPercent)
-{
-	CLabelUI* pSignalBg = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("net_signal")));
-	if (pSignalBg)
-	{
-		if (iSendLostPacketsPercent <= 5)
-		{
-			pSignalBg->SetBkImage(strSignalBg_5);
-		}
-		else if (iSendLostPacketsPercent <= 15)
-		{
-			pSignalBg->SetBkImage(strSignalBg_4);
-		}
-		else if (iSendLostPacketsPercent <= 30)
-		{
-			pSignalBg->SetBkImage(strSignalBg_3);
-		}
-		else if (iSendLostPacketsPercent <= 45)
-		{
-			pSignalBg->SetBkImage(strSignalBg_2);
-		}
-		else if (iSendLostPacketsPercent < 100)
-		{
-			pSignalBg->SetBkImage(strSignalBg_1);
-		}
-		else if (iSendLostPacketsPercent == 100)
-		{
-			pSignalBg->SetBkImage(strSignalBg_0);
-		}
-	}
-}
-
-void MainWnd::SetConnectionTime(unsigned __int64 iTime)
-{
-	CLabelUI* pConnectTime = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("connect_time")));
-	if (pConnectTime)
-	{
-		CDuiString strTemp;
-		__int64 iHour = iTime / 3600;
-		__int64 iMinute = (iTime - iHour * 3600) / 60;
-		__int64 iSecond = iTime - iHour * 3600 - iMinute * 60;
-		strTemp.Format(_T("%02I64d:%02I64d:%02I64d"), iHour, iMinute, iSecond);
-		pConnectTime->SetText(strTemp);
-	}
-}
-
-void MainWnd::ShowConnectionInfo(bool bShow)
-{
-	CHorizontalLayoutUI* pConnectionInfoLayout = static_cast<CHorizontalLayoutUI*>(m_PaintManager.FindControl(_T("connection_info_layout")));
-	if (pConnectionInfoLayout)
-	{
-		RECT rc = pConnectionInfoLayout->GetPos();
-		if (bShow)
-		{
-			rc.top = rc.bottom - 20;
-		}
-		else
-		{
-			rc.top = rc.bottom;
-		}
-		pConnectionInfoLayout->SetPos(rc);
-	}
-}
-
-void MainWnd::EnableOperationBtn(bool bRequestSpeakBtn, bool bGetInviteUrlBtn, bool bRequestHostBtn, bool bScreenShareBtn, bool bCameraBtn, bool bMicBtn, bool bHDSmoothBtn)
-{
-	CButtonUI* pRequestSpeakBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("request_speak_btn")));
-	CButtonUI* pGetInviteUrlBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("get_invite_url_btn")));
-	CButtonUI* pRequestHostBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("request_host_btn")));
-	CButtonUI* pScreenShareBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("screen_share_btn")));
-	CButtonUI* pCameraBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("camera_btn")));
-	CButtonUI* pMicBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("mic_btn")));
-	CButtonUI* pHDSmoothBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("hd_smooth_switch_btn")));
-
-	if (pRequestSpeakBtn && pGetInviteUrlBtn && pRequestHostBtn && pCameraBtn && pMicBtn && pScreenShareBtn)
-	{
-		pRequestSpeakBtn->SetEnabled(bRequestSpeakBtn);
-		pGetInviteUrlBtn->SetEnabled(bGetInviteUrlBtn);
-		pRequestHostBtn->SetEnabled(bRequestHostBtn);
-		pScreenShareBtn->SetEnabled(bScreenShareBtn);
-		pCameraBtn->SetEnabled(bCameraBtn);
-		pMicBtn->SetEnabled(bMicBtn);
-		pHDSmoothBtn->SetEnabled(bHDSmoothBtn);
-	}
-}
-
-std::wstring MainWnd::RemoveMemberFromMeetingList(std::string strStreamId)
-{
-	std::wstring wstrName;
-	if (strStreamId.length() != 0)
-	{
-		CListUI* pMeetingMemberList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("member_list")));
-		if (pMeetingMemberList)
-		{
-			CListContainerElementUI* pMeetingMemberListItem = NULL;
-			for (int i = 0; i < pMeetingMemberList->GetCount(); ++i)
-			{
-				pMeetingMemberListItem = static_cast<CListContainerElementUI*>(pMeetingMemberList->GetItemAt(i));
-				if (pMeetingMemberListItem
-					&& pMeetingMemberListItem->GetUserData().Compare(UpStringUtility::StringToWchar(strStreamId)) == 0)
-				{
-					CLabelUI* pName = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("name")));
-					if (pName)
-					{
-						wstrName.append(pName->GetText().GetData());
-					}
-					pMeetingMemberList->Remove(pMeetingMemberListItem);
-					break;
-				}
-			}
-		}
-	}
-	return wstrName;
-}
-
-void MainWnd::ShowDoBtnOnMeetingList(CListContainerElementUI* pListItem, bool bShow)
-{
-	if (pListItem)
-	{
-		int iAudio_Video_Observer = pListItem->GetTag();
-		CButtonUI* pAudioBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pListItem, _T("item_audio_btn")));
-		if (pAudioBtn)
-		{
-			if (iAudio_Video_Observer & 0x001 || bShow == false)
-			{
-				pAudioBtn->SetVisible(false);
-			}
-			else
-			{
-				pAudioBtn->SetVisible(true);
-				if (iAudio_Video_Observer & 0x100)
-				{
-					pAudioBtn->SetUserData(L"1");
-					pAudioBtn->SetForeImage(strItemMicOpenBtnBg);
-				}
-				else
-				{
-					pAudioBtn->SetUserData(L"0");
-					pAudioBtn->SetForeImage(strItemMicCloseBtnBg);
-				}
-			}
-		}
-		CButtonUI* pVideoBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pListItem, _T("item_video_btn")));
-		if (pVideoBtn)
-		{
-			if (iAudio_Video_Observer & 0x001 || bShow == false)
-			{
-				pVideoBtn->SetVisible(false);
-			}
-			else
-			{
-				pVideoBtn->SetVisible(true);
-				if (iAudio_Video_Observer & 0x010)
-				{
-					pVideoBtn->SetUserData(L"1");
-					pVideoBtn->SetForeImage(strItemCameraOpenBtnBg);
-				}
-				else
-				{
-					pVideoBtn->SetUserData(L"0");
-					pVideoBtn->SetForeImage(strItemCameraCloseBtnBg);
-				}
-			}
-		}
-		CButtonUI* pUpOrDownLevelBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pListItem, _T("item_up_down_level_btn")));
-		if (pUpOrDownLevelBtn)
-		{
-			if (bShow == false)
-			{
-				pUpOrDownLevelBtn->SetVisible(false);
-			}
-			else
-			{
-				pUpOrDownLevelBtn->SetVisible(true);
-				if (iAudio_Video_Observer & 0x001)
-				{
-					pUpOrDownLevelBtn->SetUserData(L"0");
-					pUpOrDownLevelBtn->SetForeImage(strItemUpLevelBtnBg);
-				}
-				else
-				{
-					pUpOrDownLevelBtn->SetUserData(L"1");
-					pUpOrDownLevelBtn->SetForeImage(strItemDownLevelBtnBg);
-				}
-			}
-		}
-		CButtonUI* pDeleteMemberBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pListItem, _T("item_delete_member_btn")));
-		if (pDeleteMemberBtn)
-		{
-			if (bShow == false)
-			{
-				pDeleteMemberBtn->SetVisible(false);
-			}
-			else
-			{
-				pDeleteMemberBtn->SetVisible(true);
-			}
-		}
-	}
-}
-
-void MainWnd::ShowCallRequest(bool bShow, std::string strStreamId)
-{
-	CHorizontalLayoutUI* pCallRequestLayout = static_cast<CHorizontalLayoutUI*>(m_PaintManager.FindControl(_T("call_layout")));
-	if (pCallRequestLayout)
-	{
-		RECT rc = pCallRequestLayout->GetPos();
-		if (bShow)
-		{
-			if (rc.bottom == rc.top)
-			{
-				CLabelUI* pCallNameAndPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pCallRequestLayout, _T("call_name_portrait")));
-				if (pCallRequestLayout)
-				{
-					std::wstring wstrShortName;
-					int iRgb;
-					GetShortNameAndRgb(strStreamId, wstrShortName, iRgb);
-					pCallNameAndPortrait->SetText(wstrShortName.c_str());
-					pCallNameAndPortrait->SetBkColor(iRgb);
-				}
-				rc.bottom = rc.top + 196;
-				pCallRequestLayout->SetUserData(UpStringUtility::StringToWchar(strStreamId));
-				pCallRequestLayout->SetPos(rc);
-				m_clCallRequestTimer.Start(30000, this);
-			}
-			else
-			{
-				RongRTCEngine::HostDoObserverRequestBecomeNormalUser(strStreamId.c_str(), OperationType_Busy);
-			}
-		}
-		else
-		{
-			CDuiString strUserId = pCallRequestLayout->GetUserData();
-			if (strUserId.Compare(UpStringUtility::StringToWchar(strStreamId)) == 0 || strStreamId.length() == 0)
-			{
-				rc.bottom = rc.top;
-				pCallRequestLayout->SetUserData(L"");
-				pCallRequestLayout->SetPos(rc);
-				m_clCallRequestTimer.Stop();
-			}
-		}
-	}
-}
-
-void MainWnd::AddMessageTipToMessageList(std::wstring wstrText)
-{
-	CListUI* pNotificationList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("notification_list")));
-	if (pNotificationList)
-	{
-		CDialogBuilder dlgBuilder;
-		CListContainerElementUI* pMessageListItem = static_cast<CListContainerElementUI*>(dlgBuilder.Create(_T("list_message_item.xml"), (UINT)0, NULL, &m_PaintManager));
-		if (pMessageListItem)
-		{
-			CLabelUI* pTime = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMessageListItem, _T("message_time")));
-			CTextUI* pMessage = static_cast<CTextUI*>(m_PaintManager.FindSubControlByName(pMessageListItem, _T("message_text")));
-			
-			if (pTime && pMessage && wstrText.empty() == false)
-			{
-				CDuiString strTime = WndHelper::GetNowTime();
-				pTime->SetText(strTime);
-				CDuiString strMessage = wstrText.c_str();
-				pMessage->SetText(strMessage);
-				SIZE TempSize = { pMessage->GetFixedWidth(), 1000 };
-				SIZE size = CRenderEngine::GetTextSize(m_PaintManager.GetPaintDC(), &m_PaintManager, TempSize, strMessage.GetData(), 1, DT_WORDBREAK);
-				pMessage->SetFixedHeight(size.cy);
-				pMessageListItem->SetFixedHeight(size.cy + 5 + 18);
-				if (pNotificationList->GetCount() > 1000)
-				{
-					pNotificationList->RemoveAll();
-				}
-				pNotificationList->Add(pMessageListItem);
-
-				::UpdateWindow(m_hWnd);
-				pNotificationList->EndDown();
-			}
-		}
-	}
-}
-
-std::wstring MainWnd::PaserTipInfoToText(structTipInfo * pStructTipInfo)
-{
-	// 被动  1，观察者收到主持人邀请观察者发言，2，主持人收到观察者主动要求发言（呼叫画面），3，用户收到主持人邀请打开用户音频，4，用户收到主持人邀请打开用户视频
-	//主动 11，观察者请求发言（不弹框），12，用户获取主持人权限，13，主持人邀请打开音频（不弹框），14，主持人邀请打开视频（不弹框），15，主持人邀请关闭音频，16，主持人邀请关闭视频
-	//17，主持人邀请观察者发言（不弹框），18，主持人请求降级正常用户为观察者，19，主持人踢人，20，获取邀请链接，21，保存白板提示，22，观察者打开白板，无白板提醒，23，音视频设备异常
-	//24，关闭摄像头情况下，打开屏幕共享，25，屏幕共享情况下，关闭摄像头，26，操作太频繁，27，主持人忙
-	std::wstring strRet;
-	//主动
-	if (pStructTipInfo->m_iDoType == 1)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_1).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 3)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_2).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 4)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_3).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 12)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_4).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 15)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_5).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 16)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_6).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 18)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_7).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 19)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_8).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 20)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_9).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 21)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_10).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 22)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_11).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 23)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_12).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 24)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_13).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 25)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_14).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 26)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_15).c_str());
-	}
-	else if (pStructTipInfo->m_iDoType == 27)
-	{
-		strRet.append(UPSTR(main_messagebox_tip_16).c_str());
-	}
-	return strRet;
-}
-
-void MainWnd::PaserTipInfoToDo(structTipInfo * pStructTipInfo, bool bAccept)
-{
-	if (pStructTipInfo->m_iDoType == 1)
-	{
-		RongRTCEngine::ObserverDoHostRequestUpgradeObserverToNormalUser(pStructTipInfo->m_strResponsedUserId.c_str(), bAccept);
-	}
-	else if (pStructTipInfo->m_iDoType == 3 || pStructTipInfo->m_iDoType == 4)
-	{
-		RongRTCEngine::UserDoHostRequestControlUserDevice(pStructTipInfo->m_strResponsedUserId.c_str(), ControlAction_Open, (ControlMediaType)pStructTipInfo->m_iHostControlMediaType, bAccept);
-	}
-	else if (pStructTipInfo->m_iDoType == 12)
-	{
-		if (PeerConnectionHelper::m_iRoleType != 3 && bAccept)
-		{
-			RongRTCEngine::GetHostPower();
-		}
-	}
-	else if (pStructTipInfo->m_iDoType == 15)
-	{
-		if (bAccept)
-		{
-			RongRTCEngine::HostRequestControlUserDevice(pStructTipInfo->m_strResponsedUserId.c_str(), ControlAction_Close, ControlMediaType_Audio);
-		}
-	}
-	else if (pStructTipInfo->m_iDoType == 16)
-	{
-		if (bAccept)
-		{
-			RongRTCEngine::HostRequestControlUserDevice(pStructTipInfo->m_strResponsedUserId.c_str(), ControlAction_Close, ControlMediaType_Video);
-		}
-	}
-	else if (pStructTipInfo->m_iDoType == 18)
-	{
-		if (bAccept)
-		{
-			RongRTCEngine::HostRequestDegradeNormalUserToObserver(pStructTipInfo->m_strResponsedUserId.c_str());
-		}
-	}
-	else if (pStructTipInfo->m_iDoType == 19)
-	{
-		if (bAccept)
-		{
-			RongRTCEngine::HostReomveUser(pStructTipInfo->m_strResponsedUserId.c_str());
-		}
-	}
-	else if (pStructTipInfo->m_iDoType == 20)
-	{
-		//无操作
-	}
-	else if (pStructTipInfo->m_iDoType == 21)
-	{
-		if (bAccept)
-		{
-			RongRTCEngine::LeaveChannel();
-			if (m_bIsExistApp)
-			{
-				::PostQuitMessage(0);
-			}
-			else
-			{
-				CBaseWnd* pWbWnd = WndHelper::GetWbWnd();
-				if (pWbWnd)
-				{
-					pWbWnd->Close();
-				}
-			}
-		}
-	}
-	else if (pStructTipInfo->m_iDoType == 22)
-	{
-		//无操作
-	}
-	else if (pStructTipInfo->m_iDoType == 23)
-	{
-		//无操作
-	}
-	else if (pStructTipInfo->m_iDoType == 24)
-	{
-		//无操作
-	}
-	else if (pStructTipInfo->m_iDoType == 25)
-	{
-		//无操作
-	}
-	else if (pStructTipInfo->m_iDoType == 26)
-	{
-		//无操作
-	}
-	else if (pStructTipInfo->m_iDoType == 27)
-	{
-		//无操作
-	}
-}
-
-void MainWnd::ShowTip(bool bShow, std::wstring strText, std::wstring strLeftText, std::wstring strRightText)
-{
-	CVerticalLayoutUI* pEnabledLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("enalbed_layout")));
-	MainTipWnd* pMainTipWnd = (MainTipWnd*)(WndHelper::CreateMainTipWnd());
-	if (pEnabledLayout && pMainTipWnd)
-	{
-		RECT rc = pEnabledLayout->GetPos();
-		if (bShow)
-		{
-			pMainTipWnd->ShowTip(strText, strLeftText, strRightText);
-			if (m_bFullScreen)
-			{
-				int screenX = GetSystemMetrics(SM_CXSCREEN);
-				int screenY = GetSystemMetrics(SM_CYSCREEN);
-				rc.bottom = rc.top + screenY;
-				rc.right = screenX;
-			}
-			else
-			{
-				rc.bottom = rc.top + 660;
-				rc.right = 1068;
-			}
-		}
-		else
-		{
-			pMainTipWnd->Close();
-			rc.bottom = rc.top;
-		}
-		pEnabledLayout->SetPos(rc);
-	}
-}
-
-bool MainWnd::TipInfoHaveExist(int iDoType)
-{
-	bool bRet = false;
-	for (std::list<structTipInfo*>::iterator it = m_listTipInfo.begin(); it != m_listTipInfo.end(); ++it)
-	{
-		if ((*it)->m_iDoType == iDoType)
-		{
-			bRet = true;
-			break;
-		}
-	}
-	return bRet;
-}
-
-void MainWnd::SetFullScreenAndRestoreBtn(bool bToFullScreen)
-{
-	int screenX = GetSystemMetrics(SM_CXSCREEN);
-	int screenY = GetSystemMetrics(SM_CYSCREEN);
-
-	CButtonUI* pFullScreenAndRestoreBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("fullscreen_restore_btn")));
-	if (pFullScreenAndRestoreBtn)
-	{
-		RECT rc = {0};
-		rc = pFullScreenAndRestoreBtn->GetPos();
-		if (bToFullScreen)
-		{
-			rc.right = screenX - 10;
-			rc.left = rc.right - 40;
-			pFullScreenAndRestoreBtn->SetNormalImage(strResotreNormal);
-			pFullScreenAndRestoreBtn->SetHotImage(strResotreHover);
-			pFullScreenAndRestoreBtn->SetPushedImage(strResotrePushed);
-		}
-		else
-		{
-			rc.left = 785;
-			rc.right = 825;
-
-			pFullScreenAndRestoreBtn->SetNormalImage(strFullScreenNormal);
-			pFullScreenAndRestoreBtn->SetHotImage(strFullScreenHover);
-			pFullScreenAndRestoreBtn->SetPushedImage(strFullScreenPushed);
-
-		}
-		pFullScreenAndRestoreBtn->SetPos(rc);
-	}
-
-	CLabelUI* pLocalTip = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("local_video_tip")));
-	if (pLocalTip)
-	{
-		RECT rc = { 0 };
-		rc = pLocalTip->GetPos();
-		if (bToFullScreen)
-		{
-			if (rc.top != rc.bottom)
-			{
-				rc.right = screenX - 10;
-				rc.top = screenY / 2 - 10;
-				rc.bottom = rc.top + 20;
-			}
-			else
-			{
-				rc.right = screenX - 10;
-				rc.top = screenY / 2 - 10;
-				rc.bottom = rc.top;
-			}
-		}
-		else
-		{
-			if (rc.top != rc.bottom)
-			{
-				rc.right = 818;
-				rc.top = 305;
-				rc.bottom = rc.top + 20;
-			}
-			else
-			{
-				rc.right = 818;
-				rc.top = 305;
-				rc.bottom = rc.top;
-			}
-		}
-		pLocalTip->SetPos(rc);
-	}
-
-	CLabelUI* pLocalNamePortrait = static_cast<CLabelUI*>(m_PaintManager.FindControl(_T("local_name_portrait")));
-	if (pLocalNamePortrait)
-	{
-		RECT rc = { 0 };
-		rc = pLocalNamePortrait->GetPos();
-		if (bToFullScreen)
-		{
-			if (rc.top != rc.bottom)
-			{
-				rc.left = screenX / 2 - 40;
-				rc.right = rc.left + 80;
-				rc.top = screenY / 2 - 40;
-				rc.bottom = rc.top + 80;
-			}
-			else
-			{
-				rc.left = screenX / 2 - 40;
-				rc.right = rc.left + 80;
-				rc.top = screenY / 2 - 40;
-				rc.bottom = rc.top;
-			}
-		}
-		else
-		{
-			if (rc.top != rc.bottom)
-			{
-				rc.left = 380;
-				rc.top = 275;
-				rc.right = 460;
-				rc.bottom = rc.top + 80;
-			}
-			else
-			{
-				rc.left = 380;
-				rc.top = 275;
-				rc.right = 460;
-				rc.bottom = rc.top;
-			}
-		}
-		pLocalNamePortrait->SetPos(rc);
-	}
-
-	CVerticalLayoutUI* pCallLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("call_layout")));
-	if (pCallLayout)
-	{
-		RECT rc = { 0 };
-		rc = pCallLayout->GetPos();
-		if (bToFullScreen)
-		{
-			rc.right = screenX - 41;
-			rc.left = rc.right - 164;
-		}
-		else
-		{
-			rc.left = 616;
-			rc.right = rc.left + 164;
-		}
-		pCallLayout->SetPos(rc);
-	}
-
-	CVideoUI* pLocalVideo = static_cast<CVideoUI*>(m_PaintManager.FindControl(_T("local_video")));
-	CButtonUI* pUpAndDownBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("up_down_btn")));
-	if (pLocalVideo && pUpAndDownBtn)
-	{
-		RECT rc = pLocalVideo->GetInset();
-
-		if (pUpAndDownBtn->GetUserData().Compare(L"1") == 0)
-		{
-			if (bToFullScreen)
-			{
-				rc.top = screenY - 120;
-			}
-			else
-			{
-				rc.top = 660 - 31 - 120;
-			}
-		}
-		else
-		{
-			if (bToFullScreen)
-			{
-				rc.top = screenY - 26;
-			}
-			else
-			{
-				rc.top = 660 - 31 - 26;
-			}
-		}
-		pLocalVideo->SetInset(rc);
-	}
-	
-	CVerticalLayoutUI* pRightFloatLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("right_float_layout")));
-	if (pRightFloatLayout)
-	{
-		if (bToFullScreen)
-		{
-			RECT rc = {screenX - 15, 31, screenX, screenY + 31};
-			pRightFloatLayout->SetPos(rc);
-			pRightFloatLayout->SetUserData(_T("0"));
-		}
-		else
-		{
-			RECT rc = { 837,0,1068,629 };
-			pRightFloatLayout->SetPos(rc);
-		}
-	}
-	CVerticalLayoutUI* pShowHideLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("show_hide_layout")));
-	if (pShowHideLayout)
-	{
-		CButtonUI* pShowOrHideBtn = static_cast<CButtonUI*>(m_PaintManager.FindSubControlByName(pShowHideLayout, _T("show_hide_right_float_layout_btn")));
-		if (pShowOrHideBtn)
-		{
-			if (bToFullScreen)
-			{
-				pShowHideLayout->SetVisible(true);
-				pShowOrHideBtn->SetBkImage(strLeftBar);
-			}
-			else
-			{
-				pShowHideLayout->SetVisible(false);
-			}
-		}
-	}
-	CHorizontalLayoutUI* pTopLayout = static_cast<CHorizontalLayoutUI*>(m_PaintManager.FindControl(_T("top_layout")));
-	if (pTopLayout)
-	{
-		if (bToFullScreen)
-		{
-			pTopLayout->SetVisible(false);
-		}
-		else
-		{
-			pTopLayout->SetVisible(true);
-		}
-	}
-	CVerticalLayoutUI* pRightLayout = static_cast<CVerticalLayoutUI*>(m_PaintManager.FindControl(_T("right_layout")));
-	if (pRightLayout)
-	{
-		if (bToFullScreen)
-		{
-			pRightLayout->SetVisible(false);
-		}
-		else
-		{
-			pRightLayout->SetVisible(true);
-		}
-	}
-}
-
-CDuiString MainWnd::CreateShortName(std::wstring strFullName)
-{
-	CDuiString wstrShortName;
-	CDuiString wstrFullName = UpStringUtility::StringTrim(strFullName).c_str();
-	std::list<TCHAR> listTchar;
-
-	int iNameCharLength = 0;
-	for (int i = wstrFullName.GetLength() - 1; i >= 0; --i)
-	{
-		TCHAR tempTchar = wstrFullName.GetAt(i);
-		if (tempTchar >= 0x4e00 && tempTchar <= 0x9fcb)
-		{
-			if (iNameCharLength == 4)
-			{
-				break;
-			}
-			iNameCharLength += 2;
-			listTchar.push_front(tempTchar);
-		}
-		else if (tempTchar == 0x3000 || tempTchar == 0x0020)
-		{
-			break;
-		}
-		else if (tempTchar <= 'z' && tempTchar >= 'a')
-		{
-			iNameCharLength += 1;
-			listTchar.push_front(tempTchar);
-		}
-		else if (tempTchar <= 'Z' && tempTchar >= 'A')
-		{
-			iNameCharLength += 1;
-			listTchar.push_front(tempTchar);
-		}
-		else
-		{
-			iNameCharLength += 1;
-			listTchar.push_front(tempTchar);
-		}
-		if (iNameCharLength == 5)
-		{
-			break;
-		}
-	}
-	for (std::list<TCHAR>::iterator it = listTchar.begin(); it != listTchar.end(); ++it)
-	{
-		wstrShortName += *it;
-	}
-	return wstrShortName;
-}
-
-int MainWnd::CreateRandomRgb(int iRoleType)
-{
-	int iRet = -1;
-	if (iRoleType == 2)
-	{
-		iRet = 0xFFC3C3C3;
-	}
-	else
-	{
-		unsigned int arrayRgb[6] = { 0xFF0066CC, 0xFF009900, 0xFFCC3333, 0xFFCC9966, 0xFFFF9900, 0xFFCC33CC };
-		int iPos = ::GetTickCount() % 6;
-		iRet = arrayRgb[iPos];
-	}
-	return iRet;
-}
-
-std::wstring MainWnd::CreateNotificationText(std::wstring wstrName, std::wstring wstrText)
-{
-	std::wstring wstrInfo;
-	if (wstrName.empty() == false)
-	{
-		if (wstrName.length() > 17)
-		{
-			wstrInfo.append(wstrName.substr(0, 17));
-			wstrInfo.append(L"...");
-		}
-		else
-		{
-			wstrInfo.append(wstrName);
-		}
-	}
-	wstrInfo.append(L" ");
-	wstrInfo.append(wstrText);
-	return wstrInfo;
-}
-
-std::wstring MainWnd::GetUserNameFromMemberList(std::string strUserId)
-{
-	std::wstring wstrName;
-	CListUI* pMeetingMemberList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("member_list")));
-	if (pMeetingMemberList)
-	{
-		CListContainerElementUI* pMeetingMemberListItem = NULL;
-		for (int i = 0; i < pMeetingMemberList->GetCount(); ++i)
-		{
-			pMeetingMemberListItem = static_cast<CListContainerElementUI*>(pMeetingMemberList->GetItemAt(i));
-			if (pMeetingMemberListItem && pMeetingMemberListItem->GetUserData().Compare(UpStringUtility::StringToWchar(strUserId)) == 0)
-			{
-				CLabelUI* pName = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("name")));
-				if (pName)
-				{
-					wstrName.append(pName->GetText().GetData());
-					break;
-				}
-			}
-		}
-	}
-	return wstrName;
-}
-
-void MainWnd::GetShortNameAndRgb(std::string strUserId, std::wstring & wstrShortName, int & iRgb)
-{
-	CListUI* pMeetingMemberList = static_cast<CListUI*>(m_PaintManager.FindControl(_T("member_list")));
-	if (pMeetingMemberList)
-	{
-		CListContainerElementUI* pMeetingMemberListItem = NULL;
-		for (int i = 0; i < pMeetingMemberList->GetCount(); ++i)
-		{
-			pMeetingMemberListItem = static_cast<CListContainerElementUI*>(pMeetingMemberList->GetItemAt(i));
-			if (pMeetingMemberListItem && pMeetingMemberListItem->GetUserData().Compare(UpStringUtility::StringToWchar(strUserId)) == 0)
-			{
-				CLabelUI* pPortrait = static_cast<CLabelUI*>(m_PaintManager.FindSubControlByName(pMeetingMemberListItem, _T("portrait")));
-				if (pPortrait)
-				{
-					wstrShortName.append(pPortrait->GetText().GetData());
-					iRgb = pPortrait->GetBkColor();
-					break;
-				}
-			}
-		}
-	}
-}
-
-void MainWnd::UpdateAudioLevel(std::string strJson)
-{
-	Json::Reader reader;
-	Json::Value jmessage;
-	if (reader.parse(strJson, jmessage))
-	{
-		int iSize = jmessage.size();
-		for (int i = 0; i < iSize; ++i)
-		{
-			std::string strId = jmessage[i]["id"].asString();
-			int iAudioLevel = jmessage[i]["audio_level"].asInt();
-			for (std::list<VideoRender*>::iterator it = m_lsVideoRender.begin(); it != m_lsVideoRender.end(); ++it)
-			{
-				VideoRender* pVideoRender = *it;
-				if (pVideoRender && pVideoRender->GetStreamId().compare(strId) == 0)
-				{
-					CVideoUI* pVideoCtrl = pVideoRender->GetVideoUI();
-					if (pVideoCtrl)
-					{
-						if (pVideoCtrl->GetName().Compare(_T("local_video")) == 0)
-						{
-							CGifAnimUI* pAudioLevel = static_cast<CGifAnimUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("local_speaking_flag")));
-							if (pAudioLevel)
-							{
-								RECT rc = { 0 };
-								rc = pAudioLevel->GetPos();
-								if (iAudioLevel > 0)
-								{
-									if (rc.bottom == rc.top)
-									{
-										rc.top = rc.bottom - 20;
-										pAudioLevel->SetPos(rc);
-									}
-								}
-								else
-								{
-									if (rc.bottom != rc.top)
-									{
-										rc.top = rc.bottom;
-										pAudioLevel->SetPos(rc);
-									}
-								}
-							}
-						}
-						else
-						{
-							CGifAnimUI* pAudioLevel = static_cast<CGifAnimUI*>(m_PaintManager.FindSubControlByName(pVideoCtrl, _T("speaking_flag")));
-							if (pAudioLevel)
-							{
-								RECT rc = { 0 };
-								rc = pAudioLevel->GetPos();
-								if (iAudioLevel > 0)
-								{
-									if (rc.bottom == rc.top)
-									{
-										rc.top = rc.bottom - 20;
-										pAudioLevel->SetPos(rc);
-									}
-								}
-								else
-								{
-									if (rc.bottom != rc.top)
-									{
-										rc.top = rc.bottom;
-										pAudioLevel->SetPos(rc);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-void MainWnd::UpdateMicAndCameraStatus(int iMediaType)
-{
-	CButtonUI* pCameraBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("camera_btn")));
-	CButtonUI* pMicBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("mic_btn")));
-	if (pCameraBtn && pMicBtn)
-	{
-		if (iMediaType == 0)
-		{
-			pCameraBtn->SetForeImage(strCameraClose);
-			pCameraBtn->SetTextColor(0xff3682f2);
-			pCameraBtn->SetUserData(_T("0"));
-
-			pMicBtn->SetForeImage(strMicOpen);
-			pMicBtn->SetTextColor(0xff000000);
-			pMicBtn->SetUserData(_T("1"));
-		}
-		else if (iMediaType == 1)
-		{
-			pCameraBtn->SetForeImage(strCameraOpen);
-			pCameraBtn->SetTextColor(0xff000000);
-			pCameraBtn->SetUserData(_T("1"));
-
-			pMicBtn->SetForeImage(strMicOpen);
-			pMicBtn->SetTextColor(0xff000000);
-			pMicBtn->SetUserData(_T("1"));
-		}
-		else if (iMediaType == 2)
-		{
-			pCameraBtn->SetForeImage(strCameraOpen);
-			pCameraBtn->SetTextColor(0xff000000);
-			pCameraBtn->SetUserData(_T("1"));
-
-			pMicBtn->SetForeImage(strMicClose);
-			pMicBtn->SetTextColor(0xff3682f2);
-			pMicBtn->SetUserData(_T("0"));
-		}
-		else if (iMediaType == 3)
-		{
-			pCameraBtn->SetForeImage(strCameraClose);
-			pCameraBtn->SetTextColor(0xff3682f2);
-			pCameraBtn->SetUserData(_T("0"));
-
-			pMicBtn->SetForeImage(strMicClose);
-			pMicBtn->SetTextColor(0xff3682f2);
-			pMicBtn->SetUserData(_T("0"));
-		}
 	}
 }

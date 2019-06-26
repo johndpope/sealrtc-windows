@@ -65,7 +65,7 @@ void MainTipWnd::OnClickTipClose(TNotifyUI & msg)
 	MainWnd* pMainWnd = (MainWnd*)(WndHelper::GetMainWnd());
 	if (pMainWnd)
 	{
-		pMainWnd->ClickTipClose();
+		//pMainWnd->ClickTipClose();
 	}
 }
 
@@ -74,7 +74,7 @@ void MainTipWnd::OnClickTipYes(TNotifyUI & msg)
 	MainWnd* pMainWnd = (MainWnd*)(WndHelper::GetMainWnd());
 	if (pMainWnd)
 	{
-		pMainWnd->ClickTipYes();
+		//pMainWnd->ClickTipYes();
 	}
 }
 
@@ -83,7 +83,7 @@ void MainTipWnd::OnClickTipNo(TNotifyUI & msg)
 	MainWnd* pMainWnd = (MainWnd*)(WndHelper::GetMainWnd());
 	if (pMainWnd)
 	{
-		pMainWnd->ClickTipNo();
+		//pMainWnd->ClickTipNo();
 	}
 }
 

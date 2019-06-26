@@ -26,7 +26,7 @@ CBaseWnd* WndHelper::CreateLogonWnd()
 	return pWnd;
 }
 
-CBaseWnd* WndHelper::BackLogonWnd(CDuiString strChannelId)
+CBaseWnd* WndHelper::BackLogonWnd()
 {
 	CBaseWnd* pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_LOGON, _T("LogonWnd"), FALSE);
 	if (pWnd == NULL)
@@ -35,7 +35,6 @@ CBaseWnd* WndHelper::BackLogonWnd(CDuiString strChannelId)
 		CStdStringPtrMap aInitData;
 		bool bFromMain = true;
 		aInitData.Insert(_T("bFromMain"), (void*)&bFromMain);
-		aInitData.Insert(_T("strChannelId"), (void*)&strChannelId);
 		pWnd->PreCreateWindowInit(aInitData);
 		pWnd->CreateWnd(NULL, APP_NAME, UI_WNDSTYLE_FRAME & ~WS_MAXIMIZEBOX, WS_EX_OVERLAPPEDWINDOW, CURect(0, 0, 0, 0));
 		pWnd->CenterWindow();
@@ -47,17 +46,12 @@ CBaseWnd* WndHelper::BackLogonWnd(CDuiString strChannelId)
 	return pWnd;
 }
 
-CBaseWnd * WndHelper::CreateMainWnd(CDuiString strChannelId, CDuiString strName)
+CBaseWnd * WndHelper::CreateMainWnd()
 {
 	CBaseWnd* pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_MAIN, _T("MainWnd"), FALSE);
 	if (pWnd == NULL)
 	{
 		pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_MAIN, _T("MainWnd"));
-		CStdStringPtrMap aInitData;
-		aInitData.Insert(_T("strChannelId"), (void*)&strChannelId);
-		aInitData.Insert(_T("strName"), (void*)&strName);
-		pWnd->PreCreateWindowInit(aInitData);
-
 		pWnd->CreateWnd(NULL, APP_NAME, UI_WNDSTYLE_FRAME & ~WS_MAXIMIZEBOX, 0, CURect(0, 0, 0, 0), L"");
 		pWnd->CenterWindow();
 	}
@@ -96,37 +90,25 @@ CBaseWnd * WndHelper::GetMainTipWnd()
 	return pWnd;
 }
 
-CBaseWnd * WndHelper::ShowWbWnd(CDuiString strUrl)
+CBaseWnd * WndHelper::CreateStateInfoWnd()
 {
-	CBaseWnd* pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_WB, _T("WbWnd"), FALSE);
+	CBaseWnd* pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_STATE_INFO, _T("StateInfoWnd"), FALSE);
 	if (pWnd == NULL)
 	{
-		pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_WB, _T("WbWnd"));
-		
-		CStdStringPtrMap aInitData;
-		aInitData.Insert(_T("strUrl"), (void*)&strUrl);
-		pWnd->PreCreateWindowInit(aInitData);
-
-		pWnd->CreateWnd(NULL, APP_NAME, UI_WNDSTYLE_FRAME, 0, CURect(0, 0, 0, 0));
+		pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_STATE_INFO, _T("StateInfoWnd"));
+		pWnd->CreateWnd(NULL, APP_NAME, UI_WNDSTYLE_FRAME & ~WS_MAXIMIZEBOX, 0, CURect(0, 0, 0, 0));
 		pWnd->CenterWindow();
-
-		if (pWnd)
-		{
-			pWnd->TopWindow();
-		}
 	}
-	else
+	if (pWnd)
 	{
-		WbWnd* pWbWnd = static_cast<WbWnd*>(pWnd);
-		pWbWnd->UpdateUrl(strUrl);
 		pWnd->TopWindow();
 	}
 	return pWnd;
 }
 
-CBaseWnd * WndHelper::GetWbWnd()
+CBaseWnd * WndHelper::GetStateInfoWnd()
 {
-	CBaseWnd* pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_WB, _T("WbWnd"), FALSE);
+	CBaseWnd* pWnd = CWndManager::GetWndManager()->FindWnd(ID_WND_STATE_INFO, _T("StateInfoWnd"), FALSE);
 	return pWnd;
 }
 
