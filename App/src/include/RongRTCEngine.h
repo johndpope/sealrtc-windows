@@ -231,14 +231,14 @@ public:
 };
 
 //带有错误码的回调函数
-class RongRTCCallBackOne
+class RongRTCCallBackOneParam
 {
 public:
 	virtual void OnCallBack(int out_code) = 0;
 };
 
 //带有错误码和返回值json串的回调函数
-class RongRTCCallBackTwo
+class RongRTCCallBackTwoParam
 {
 public:
 	virtual void OnCallBack(int out_code, const char* out_ret) = 0;
@@ -291,30 +291,30 @@ public:
 			44556677用户发布了流Tag为RongCloudRTC的音频流; 55667788用户发布了流Tag为RongCloudRTC的视频流, 不支持大小流;
 			99887766用户没有发任何流
 	*/
-	static int JoinRoom(const char* in_room_id, RongRTCRoomType in_room_type, RongRTCCallBackTwo* in_callback);
+	static int JoinRoom(const char* in_room_id, RongRTCRoomType in_room_type, RongRTCCallBackTwoParam* in_callback);
 	/*
 	功能: 离开房间
 	参数: in_callback为完成回调
 	*/
-	static int LeaveRoom(RongRTCCallBackOne* in_callback);
+	static int LeaveRoom(RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 设置房间自定义属性值, 如果in_object_name不为空且in_content不为空, 会在设置属性值的同时往房间内发送消息
 	参数: in_key为键值, in_value为值, in_object_name为设置属性值时附加的消息名字, in_content为设置属性时附加的消息内容, in_callback为完成回调
 	*/
-	static int SetRoomAttributeValue(const char* in_key, const char* in_value, const char* in_object_name, const char* in_content, RongRTCCallBackOne* in_callback);
+	static int SetRoomAttributeValue(const char* in_key, const char* in_value, const char* in_object_name, const char* in_content, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 删除房间自定义属性值, 如果in_object_name不为空且in_content不为空, 会在删除属性值的同时往房间内发送消息
 	参数: in_keys为键值json串, 格式为["key","key"], 例子 ["11223344","33445566"],
 			in_object_name为设置属性值时附加的消息名字, in_content为设置属性时附加的消息内容, in_callback为完成回调
 	*/
-	static int DeleteRoomAttributeValue(const char* in_keys, const char* in_object_name, const char* in_content, RongRTCCallBackOne* in_callback);
+	static int DeleteRoomAttributeValue(const char* in_keys, const char* in_object_name, const char* in_content, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 获取房间自定义属性值
 	参数: in_keys为键值json串, 格式为["key","key"], 例子 ["11223344","33445566"], 如果in_keys为空字符串, 即in_keys = ""时, 
 			获取所有key对应的value, in_callback为完成回调, 回调函数第二个参数为key对应的value值,
 			格式为 [{"key":"value"},{"key":"value"}], 例子 [{"11223344":"abcdefg"},{"33445566":"gfedcba"}]
 	*/
-	static int GetRoomAttributeValue(const char* in_keys, RongRTCCallBackTwo* in_callback);
+	static int GetRoomAttributeValue(const char* in_keys, RongRTCCallBackTwoParam* in_callback);
 	/*
 	功能: 订阅流
 	参数: in_subscribe_stream为订阅流的json串, 格式为 
@@ -328,7 +328,7 @@ public:
 			]
 			in_callback为完成回调
 	*/
-	static int SubscribeStream(const char* in_subscribe_stream, RongRTCCallBackOne* in_callback);
+	static int SubscribeStream(const char* in_subscribe_stream, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 取消订阅流
 	参数: in_subscribe_stream为取消订阅流的json串, 格式为 [{"userid": [{"tag":"***","mediaType":***},{"tag":"***","mediaType":***}]}],
@@ -341,44 +341,44 @@ public:
 			],
 			in_callback为完成回调
 	*/
-	static int UnSubscribeStream(const char* in_unsubscribe_stream, RongRTCCallBackOne* in_callback);
+	static int UnSubscribeStream(const char* in_unsubscribe_stream, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 发布默认流
 	参数: in_publish_stream_type为发布默认流(摄像头采集的视频流，麦克风采集的音频流)的类型, 详见RongRTCStreamType定义,
 			in_callback为完成回调
 	*/
-	static int PublishDefaultStream(RongRTCStreamType in_publish_stream_type, RongRTCCallBackOne* in_callback);
+	static int PublishDefaultStream(RongRTCStreamType in_publish_stream_type, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 取消发布默认流
 	参数: in_publish_stream_type为取消发布默认流(摄像头采集的视频流，麦克风采集的音频流)的类型, 详见RongRTCStreamType定义,
 			in_callback为完成回调
 	*/
-	static int UnPublishDefaultStream(RongRTCStreamType in_unpublish_stream_type, RongRTCCallBackOne* in_callback);
+	static int UnPublishDefaultStream(RongRTCStreamType in_unpublish_stream_type, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 打开或者关闭本地默认音频流
 	参数: in_enable为是否关闭, true为打开, false为关闭, in_callback为完成回调
 	*/
-	static int SetLocalDefaultAudioStreamEnabled(bool in_enable, RongRTCCallBackOne* in_callback);
+	static int SetLocalDefaultAudioStreamEnabled(bool in_enable, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 打开或者关闭本地默认视频流
 	参数: in_enable为是否关闭, true为打开, false为关闭, in_callback为完成回调
 	*/
-	static int SetLocalDefaultVideoStreamEnabled(bool in_enable, RongRTCCallBackOne* in_callback);
+	static int SetLocalDefaultVideoStreamEnabled(bool in_enable, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 打开或者关闭扬声器
 	参数: in_enable为是否关闭, true为打开, false为关闭，in_callback为完成回调
 	*/
-	static int SetSpeakerEnabled(bool in_enable, RongRTCCallBackOne* in_callback);
+	static int SetSpeakerEnabled(bool in_enable, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 发布SDK内置屏幕共享流
 	参数: in_callback为完成回调
 	*/
-	static int PublishScreenShareStream(RongRTCCallBackOne* in_callback);
+	static int PublishScreenShareStream(RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 取消发布SDK内置屏幕共享流
 	参数: in_callback为完成回调
 	*/
-	static int UnPublishScreenShareStream(RongRTCCallBackOne* in_callback);
+	static int UnPublishScreenShareStream(RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 发布自定义视频流
 	参数: in_publish_stream为发布自定义流的json串, 格式为 [{"tag":"***", "resolution":"***"}]
@@ -386,13 +386,13 @@ public:
 			例子: [{"tag":"Video1","resolution":"640X480"},{"tag":"Video2","resolution":"640X480"}],
 			in_callback为完成回调
 	*/
-	static int PublishCustomizeStream(const char* in_publish_stream, RongRTCCallBackOne* in_callback);
+	static int PublishCustomizeStream(const char* in_publish_stream, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 取消发布自定义视频流
 	参数: in_publish_stream为取消发布自定义流的json串, 格式为 [{"tag":"***"}],
 			tag为流标签, 例子: [{"tag":"Video1"},{"tag":"Video2"}], in_callback为完成回调
 	*/
-	static int UnPublishCustomizeStream(const char* in_unpublish_stream, RongRTCCallBackOne* in_callback);
+	static int UnPublishCustomizeStream(const char* in_unpublish_stream, RongRTCCallBackOneParam* in_callback);
 	/*
 	功能: 发送自定义视频流数据
 	参数: in_tag为自定义视频流的流标签, in_video_frame为一帧视频流数据, 详见RongRTCVideoFrame定义
@@ -402,7 +402,7 @@ public:
 	功能: 向房间内发送消息
 	参数: in_object_name为消息名字, in_content为消息内容, in_callback为完成回调
 	*/
-	static int SendRTCMessage(const char* in_object_name, const char* in_content, RongRTCCallBackOne* in_callback);
+	static int SendRTCMessage(const char* in_object_name, const char* in_content, RongRTCCallBackOneParam* in_callback);
 };
 
 #endif
